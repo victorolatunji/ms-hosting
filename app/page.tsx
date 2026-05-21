@@ -1,65 +1,77 @@
-import Image from "next/image";
+import Header from "./components/Header";
+// import Hero from "./components/Hero";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <Header />
+      {/* <Hero /> */}
+      {/* Spacer to test scroll. Will be removed as we add more sections. */}
+      <div className="min-h-[100vh]" />
+    </>
   );
 }
+
+
+// // Temporary test page to confirm brand colors and fonts load correctly.
+// // We'll replace this with the real homepage in the next steps.
+// export default function Home() {
+//   return (
+//     <main className="min-h-screen flex flex-col items-center justify-center p-8">
+//       {/* font-display = Cormorant Garamond, text-moss = brand dark green */}
+//       <h1 className="font-display text-6xl text-moss mb-4">
+//         M&amp;S Hosting
+//       </h1>
+
+//       {/* font-body = DM Sans (the default body font we set in globals.css),
+//           text-ink-soft = the muted text grey */}
+//       <p className="font-body text-ink-soft text-lg mb-8">
+//         Brand setup test
+//       </p>
+
+//       {/* A row of color swatches to visually confirm each brand color works */}
+//       <div className="flex gap-3 flex-wrap justify-center">
+//         <Swatch color="bg-bone"      label="bone" />
+//         <Swatch color="bg-bone-soft" label="bone-soft" />
+//         <Swatch color="bg-moss"      label="moss"      dark />
+//         <Swatch color="bg-moss-dark" label="moss-dark" dark />
+//         <Swatch color="bg-clay"      label="clay"      dark />
+//         <Swatch color="bg-clay-soft" label="clay-soft" dark />
+//         <Swatch color="bg-amber"     label="amber" />
+//         <Swatch color="bg-ink"       label="ink"       dark />
+//         <Swatch color="bg-ink-soft"  label="ink-soft"  dark />
+//       </div>
+
+//       {/* font-mono = DM Mono, used for small uppercase labels in the design */}
+//       <p className="font-mono text-xs tracking-widest uppercase text-clay mt-8">
+//         If you can read this in mono, fonts are working
+//       </p>
+//     </main>
+//   );
+// }
+
+// // Small helper component. Just a colored square with a label below.
+// // "dark" prop flips the label to white text for dark swatches.
+// function Swatch({
+//   color,
+//   label,
+//   dark = false,
+// }: {
+//   color: string;
+//   label: string;
+//   dark?: boolean;
+// }) {
+//   return (
+//     <div className="flex flex-col items-center">
+//       {/* w-20 h-20 = 80px square. border-line = our faint brand border. */}
+//       <div className={`${color} w-20 h-20 rounded-lg border border-line`} />
+//       <span
+//         className={`font-mono text-xs mt-2 ${
+//           dark ? "text-ink" : "text-ink-soft"
+//         }`}
+//       >
+//         {label}
+//       </span>
+//     </div>
+//   );
+// }
