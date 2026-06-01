@@ -51,7 +51,7 @@ export default function Hero() {
           Hosted<br />
           in person<br />
           <span className="font-display italic text-[22px] tracking-normal">
-            by Maddy &amp; Sam
+            by Maddie &amp; Sam
           </span>
         </span>
       </div>
