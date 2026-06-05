@@ -1,5 +1,4 @@
 // Cancellations page at /cancellations.
-// Uses the same InquiryForm component as become-a-host, just different copy.
 
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -23,7 +22,6 @@ export default function CancellationsPage() {
 
       <main className="max-w-[1320px] mx-auto px-6 pt-8 pb-[110px] max-md:px-5 max-md:pt-6 max-md:pb-[70px]">
 
-        {/* Back link */}
         <Link
           href="/"
           className="underline-link inline-flex items-center gap-1.5 text-ink-soft text-sm no-underline mb-6"
@@ -31,7 +29,6 @@ export default function CancellationsPage() {
           <ChevronLeft size={14} /> Back home
         </Link>
 
-        {/* Centered, narrow column. This page is shorter and simpler. */}
         <div className="max-w-[700px] mx-auto">
 
           <Eyebrow>Cancellations</Eyebrow>
@@ -56,7 +53,6 @@ export default function CancellationsPage() {
             different week. We do our best to be flexible.
           </p>
 
-          {/* Form card */}
           <div className="mt-10 bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
             <Eyebrow>Send a cancellation request</Eyebrow>
             <div
@@ -68,6 +64,7 @@ export default function CancellationsPage() {
             </div>
 
             <InquiryForm
+              inquiryType="cancellation"
               subject="Cancellation"
               messagePlaceholder="Property name, original dates, and your reason for changing or cancelling."
               submitLabel="Send cancellation request"

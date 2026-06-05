@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Menu, X, Globe, ChevronDown } from "lucide-react";
 
 const CURRENCIES = ["CAD", "USD", "EUR", "GBP", "AUD"] as const;
 type Currency = (typeof CURRENCIES)[number];
 
 const NAV_LINKS = [
-  { label: "Stays", href: "#stays" },
-  { label: "Cities", href: "#cities" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Stays", href: "/#stays" },
+  { label: "Cities", href: "/#cities" },
+  { label: "About", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Header() {
@@ -35,7 +36,7 @@ export default function Header() {
       }`}
     >
       <div className="max-w-[1320px] mx-auto px-5 py-3.5 flex items-center justify-between gap-4">
-        <a href="#" className="flex items-center gap-3 no-underline text-ink shrink-0">
+        <Link href="/" className="flex items-center gap-3 no-underline text-ink shrink-0">
           <Image
             src="/images/logo.jpeg"
             alt="M&S Hosting Solutions"
@@ -49,17 +50,17 @@ export default function Header() {
               Greater Toronto Area
             </div>
           </div>
-        </a>
+        </Link>
 
         <nav className="hidden md:flex items-center gap-7">
           {NAV_LINKS.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="underline-link text-ink text-sm tracking-[0.01em] no-underline"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
 
           <div className="relative">
@@ -109,14 +110,14 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden bg-bone border-t border-line px-5 pt-2 pb-[22px]">
           {[...NAV_LINKS, { label: "Terms", href: "#terms" }].map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
               className="block py-4 border-b border-line text-ink no-underline text-[15px]"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
 
           <div className="flex gap-2 mt-[18px]">

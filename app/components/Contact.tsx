@@ -1,19 +1,16 @@
-"use client";
-// Client component because the form needs onSubmit to preventDefault.
-// In Phase 3 we'll wire this to React Hook Form + Zod + Resend + Supabase.
+// Homepage Contact section. Uses the shared InquiryForm component for
+// the actual form, so all submission/loading/success/error logic is in one place.
 
-import { Phone, Mail, Send } from "lucide-react";
+import { Phone, Mail } from "lucide-react";
 import Eyebrow from "./ui/Eyebrow";
-import Field from "./ui/Field";
+import InquiryForm from "./InquiryForm";
 
 export default function Contact() {
   return (
-    // id="contact" so the header's #contact nav link scrolls here
     <section
       id="contact"
       className="px-6 pt-10 pb-[110px] max-md:px-5 max-md:py-[70px]"
     >
-      {/* The contact card itself. Centered, max width, lots of padding. */}
       <div
         className="
           max-w-[980px] mx-auto bg-bone border border-line rounded-[26px]
@@ -26,13 +23,12 @@ export default function Contact() {
         {/* Decorative clay circle in the top-right corner */}
         <div className="absolute -top-[80px] -right-[80px] w-[220px] h-[220px] rounded-full bg-clay/6" />
 
-        {/* Two-column grid: pitch on the left, form on the right */}
         <div
           className="grid gap-14 relative"
           style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}
         >
 
-          {/* LEFT COLUMN: eyebrow, heading, intro, contact links */}
+          {/* LEFT: pitch + contact methods */}
           <div>
             <Eyebrow>Say hello</Eyebrow>
             <h2
@@ -46,7 +42,6 @@ export default function Contact() {
               during the day, or first thing the next morning.
             </p>
 
-            {/* Phone and email links. Clay icons, ink text, underline-on-hover. */}
             <div className="flex flex-col gap-3.5 text-sm">
               <a
                 href="tel:9059226538"
@@ -63,63 +58,17 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: the form.
-              onSubmit preventDefault is a stub; real submission happens in Phase 3. */}
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col gap-4"
-          >
-            <Field label="Your name"  placeholder="Jane Doe"          name="name"    />
-            <Field label="Email"      placeholder="jane@example.com"  name="email"   type="email" />
-            <Field label="Subject"    placeholder="Booking enquiry"   name="subject" />
-
-            {/* Textarea, doesn't use the Field component since Field is for inputs only */}
-            <div>
-              <label className="block font-mono text-[10px] tracking-[0.2em] uppercase mb-2 text-ink-soft">
-                Message
-              </label>
-              <textarea
-                rows={4}
-                name="message"
-                placeholder="Tell us about your stay"
-                className="
-                  w-full px-[15px] py-[13px]
-                  border border-line rounded-xl
-                  bg-transparent text-sm text-ink font-body
-                  resize-y transition-colors
-                "
-              />
-            </div>
-
-            {/* CASL-compliant marketing opt-in checkbox.
-                Per Canadian anti-spam law, this MUST be unchecked by default,
-                and consent must be express, not bundled with the form submission.
-                We'll record this flag when wiring up Supabase in Phase 3. */}
-            <label className="flex items-start gap-2.5 text-[12px] text-ink-soft cursor-pointer leading-[1.5]">
-              <input
-                type="checkbox"
-                name="marketing_consent"
-                className="mt-0.5 accent-clay shrink-0"
-              />
-              <span>
-                Yes, I&apos;d like to receive occasional emails about new homes
-                and seasonal offers. You can unsubscribe anytime.
-              </span>
-            </label>
-
-            {/* Submit button. Clay background, sends a paper plane icon. */}
-            <button
-              type="submit"
-              className="
-                bg-clay text-bone border-none p-[15px] rounded-xl
-                text-sm font-medium cursor-pointer mt-1
-                flex items-center justify-center gap-2
-                tracking-[0.02em]
-              "
-            >
-              Send message <Send size={14} />
-            </button>
-          </form>
+          {/* RIGHT: the form, powered by the shared InquiryForm.
+              inquiryType="contact" tags submissions in the database as
+              homepage contact submissions, easy to filter later. */}
+          <div>
+            <InquiryForm
+              inquiryType="contact"
+              subject="Homepage contact form"
+              messagePlaceholder="Tell us about your stay"
+              submitLabel="Send message"
+            />
+          </div>
         </div>
       </div>
     </section>

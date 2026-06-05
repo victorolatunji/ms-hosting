@@ -1,5 +1,4 @@
 // Become a host page at /become-a-host.
-// Reuses Header, Footer, ChatWidget, and the InquiryForm component.
 
 import type { Metadata } from "next";
 import { Award, Calendar, MessageCircle } from "lucide-react";
@@ -15,12 +14,10 @@ export const metadata: Metadata = {
     "Have a property in the Greater Toronto Area? Let Madeline and Samuel Jean-Louis take the day-to-day off your hands.",
 };
 
-// Three reassurance points shown on the page.
-// Each is [icon, headline, subtitle].
 const PERKS: [React.ComponentType<{ size?: number; className?: string }>, string, string][] = [
-  [Award,         "Hosted in person",        "Real humans, not a faceless property manager."],
+  [Award,         "Hosted in person",          "Real humans, not a faceless property manager."],
   [Calendar,      "Day-to-day off your plate", "Bookings, cleanings, repairs, and check-ins, all handled."],
-  [MessageCircle, "One number to call",      "You text us about your home. We text everyone else."],
+  [MessageCircle, "One number to call",        "You text us about your home. We text everyone else."],
 ];
 
 export default function BecomeAHost() {
@@ -30,13 +27,12 @@ export default function BecomeAHost() {
 
       <main className="max-w-[1320px] mx-auto px-6 pt-12 pb-[110px] max-md:px-5 max-md:pt-6 max-md:pb-[70px]">
 
-        {/* Two-column layout: pitch on the left, form card on the right */}
         <div
           className="grid gap-12 max-lg:grid-cols-1"
           style={{ gridTemplateColumns: "minmax(0, 1.2fr) minmax(320px, 1fr)" }}
         >
 
-          {/* LEFT: the pitch */}
+          {/* LEFT: pitch */}
           <div>
             <Eyebrow>Become a host</Eyebrow>
             <h1
@@ -60,7 +56,6 @@ export default function BecomeAHost() {
               you through what hosting with us looks like.
             </p>
 
-            {/* Perks list */}
             <div className="mt-10 flex flex-col gap-5 max-w-[560px]">
               {PERKS.map(([Icon, headline, subtitle], i) => (
                 <div key={i} className="flex items-start gap-4">
@@ -80,7 +75,7 @@ export default function BecomeAHost() {
             </div>
           </div>
 
-          {/* RIGHT: form card, sticky on desktop */}
+          {/* RIGHT: form card */}
           <div className="lg:sticky lg:top-24 lg:self-start">
             <div className="bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
               <Eyebrow>Tell us about your home</Eyebrow>
@@ -93,6 +88,7 @@ export default function BecomeAHost() {
               </div>
 
               <InquiryForm
+                inquiryType="host"
                 subject="Become a host"
                 messagePlaceholder="Tell us a little about your property: where it is, how many bedrooms, and what you are hoping for from a hosting partner."
                 submitLabel="Send application"
