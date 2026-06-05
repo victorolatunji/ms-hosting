@@ -1,28 +1,30 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Phone } from "lucide-react";
 
 // Footer. Dark moss-dark background, four columns + bottom strip.
-// Server component, all static content. Links are placeholders for now.
-// Real routes get wired up in Phase 2.
+// Server component, all static content.
+// Links wired to real pages where they exist, # for placeholders that are
+// still planned (Wishlist, Reviews, Terms, Privacy, Cookies).
 
 // The three link columns. Each is a title and a list of [label, href] pairs.
 const COLUMNS: { title: string; links: [string, string][] }[] = [
   {
     title: "Explore",
     links: [
-      ["All stays", "#stays"],
-      ["Cities", "#cities"],
-      ["Map view", "#"],
+      ["All stays", "/#stays"],
+      ["Cities", "/#cities"],
+      ["Map view", "/#map"],
       ["Wishlist", "#"],
     ],
   },
   {
     title: "Company",
     links: [
-      ["About Maddie & Sam", "#about"],
-      ["Contact", "#contact"],
+      ["About Maddie & Sam", "/#about"],
+      ["Contact", "/#contact"],
       ["Reviews", "#"],
-      ["Become a host", "#"],
+      ["Become a host", "/become-a-host"],
     ],
   },
   {
@@ -31,7 +33,7 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
       ["Terms", "#"],
       ["Privacy policy", "#"],
       ["Cookies", "#"],
-      ["Cancellations", "#"],
+      ["Cancellations", "/cancellations"],
     ],
   },
 ];
@@ -41,8 +43,7 @@ export default function Footer() {
     <footer className="bg-moss-dark text-bone/65 px-6 pt-[72px] pb-9 max-md:px-5 max-md:pt-14 max-md:pb-7">
       <div className="max-w-[1320px] mx-auto">
 
-        {/* Four-column grid. First column is brand + tagline + phone.
-            Other three are link lists. */}
+        {/* Four-column grid */}
         <div
           className="grid gap-11 mb-14"
           style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
@@ -81,16 +82,30 @@ export default function Footer() {
                 {col.title}
               </div>
               <ul className="list-none p-0 m-0 flex flex-col gap-[11px]">
-                {col.links.map(([label, href]) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      className="text-bone/70 no-underline text-sm hover:text-bone transition-colors"
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
+                {col.links.map(([label, href]) => {
+                  // Use Next.js Link for internal routes (those starting with /).
+                  // External / placeholder hrefs (# or http) use a plain <a>.
+                  const isInternalRoute = href.startsWith("/");
+                  return (
+                    <li key={label}>
+                      {isInternalRoute ? (
+                        <Link
+                          href={href}
+                          className="text-bone/70 no-underline text-sm hover:text-bone transition-colors"
+                        >
+                          {label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={href}
+                          className="text-bone/70 no-underline text-sm hover:text-bone transition-colors"
+                        >
+                          {label}
+                        </a>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -100,8 +115,6 @@ export default function Footer() {
         <div className="border-t border-bone/10 pt-[26px] flex justify-between flex-wrap gap-4 text-[12px]">
           <span>(C) 2026 M&amp;S Hosting Solutions. All rights reserved.</span>
           <div className="flex items-center gap-5 flex-wrap">
-            {/* Developer credit, per the project agreement.
-                Edit "Victo" to your full name if you'd prefer that. */}
             <span className="text-bone/50">
               Site by{" "}
               <a

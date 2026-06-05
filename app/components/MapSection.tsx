@@ -24,7 +24,7 @@ const PIN_POSITIONS: { top: string; left: string }[] = [
 
 export default function MapSection() {
   return (
-    <section className="px-6 py-[110px] max-md:px-5 max-md:py-[70px]">
+    <section id="map" className="px-6 py-[110px] max-md:px-5 max-md:py-[70px]">
       <div className="max-w-[1320px] mx-auto">
 
         {/* Header */}
