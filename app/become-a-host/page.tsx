@@ -27,30 +27,31 @@ export default function BecomeAHost() {
 
       <main className="max-w-[1320px] mx-auto px-6 pt-12 pb-[110px] max-md:px-5 max-md:pt-6 max-md:pb-[70px]">
 
-        <div
-          className="grid gap-12 max-lg:grid-cols-1"
-          style={{ gridTemplateColumns: "minmax(0, 1.2fr) minmax(320px, 1fr)" }}
-        >
+        {/* Mobile-first: single column by default.
+            Desktop (lg breakpoint, 1024px+): two columns, pitch wider than form.
+            Using Tailwind responsive classes instead of inline style so the
+            mobile single-column actually applies. */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,1fr)] gap-12">
 
           {/* LEFT: pitch */}
           <div>
             <Eyebrow>Become a host</Eyebrow>
             <h1
               className="font-display m-0 leading-[1.02] text-moss"
-              style={{ fontSize: "clamp(44px, 6vw, 78px)" }}
+              style={{ fontSize: "clamp(40px, 6vw, 78px)" }}
             >
               Your home,{" "}
               <span className="italic text-clay">looked after.</span>
             </h1>
 
-            <p className="mt-8 text-[18px] leading-[1.75] text-ink-soft m-0 max-w-[560px]">
+            <p className="mt-8 text-[17px] leading-[1.75] text-ink-soft m-0 max-w-[560px]">
               We are a small, family-run hosting team. We do not chase volume.
               We take on homes we would be proud to stay in ourselves, in cities
               we know well, and we host them the way the owner would if they had
               the time.
             </p>
 
-            <p className="mt-5 text-[18px] leading-[1.75] text-ink-soft m-0 max-w-[560px]">
+            <p className="mt-5 text-[17px] leading-[1.75] text-ink-soft m-0 max-w-[560px]">
               If that sounds like the kind of partnership you are looking for,
               send us a note. We will reach out, ask a few questions, and walk
               you through what hosting with us looks like.
@@ -75,7 +76,7 @@ export default function BecomeAHost() {
             </div>
           </div>
 
-          {/* RIGHT: form card */}
+          {/* RIGHT: form card. Sticky only on desktop. */}
           <div className="lg:sticky lg:top-24 lg:self-start">
             <div className="bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
               <Eyebrow>Tell us about your home</Eyebrow>

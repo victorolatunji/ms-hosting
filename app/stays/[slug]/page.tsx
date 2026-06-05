@@ -77,10 +77,9 @@ export default async function PropertyPage({
           <ChevronLeft size={14} /> Back to all stays
         </Link>
 
-        <div
-          className="grid gap-10 max-lg:grid-cols-1"
-          style={{ gridTemplateColumns: "minmax(0, 1.6fr) minmax(280px, 1fr)" }}
-        >
+        {/* Mobile-first: single column.
+            Desktop (lg breakpoint, 1024px+): two columns, photo+story wider than form. */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)] gap-10">
 
           {/* LEFT COLUMN: hero photo + story */}
           <div>
@@ -103,7 +102,7 @@ export default async function PropertyPage({
               <Eyebrow>The home</Eyebrow>
               <h1
                 className="font-display m-0 leading-[1.05] text-moss"
-                style={{ fontSize: "clamp(34px, 4.5vw, 54px)" }}
+                style={{ fontSize: "clamp(32px, 4.5vw, 54px)" }}
               >
                 {property.name}
               </h1>
@@ -154,7 +153,7 @@ export default async function PropertyPage({
             </div>
           </div>
 
-          {/* RIGHT COLUMN: sticky details card + enquiry form */}
+          {/* RIGHT COLUMN: details card + enquiry form. Sticky only on desktop. */}
           <div className="lg:sticky lg:top-24 lg:self-start">
 
             <div className="bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
@@ -179,10 +178,6 @@ export default async function PropertyPage({
                 </li>
               </ul>
 
-              {/* The form, powered by InquiryForm.
-                  inquiryType="property" + propertySlug tags this submission
-                  in the database so admins can see which property each enquiry
-                  was about. */}
               <InquiryForm
                 inquiryType="property"
                 subject={`Enquiry about ${property.name}`}
