@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import ChatWidget from "@/app/components/ChatWidget";
+// import ChatWidget from "@/app/components/ChatWidget";
 import Eyebrow from "@/app/components/ui/Eyebrow";
 import InquiryForm from "@/app/components/InquiryForm";
 import { PROPERTIES, getPropertyBySlug } from "@/lib/properties";
@@ -192,7 +192,7 @@ export default async function PropertyPage({
       </main>
 
       <Footer />
-      <ChatWidget />
+      {/* <ChatWidget /> */}
     </>
   );
 }

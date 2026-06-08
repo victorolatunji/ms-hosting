@@ -12,7 +12,7 @@ import About from "./components/About";
 import MapSection from "./components/MapSection";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-import ChatWidget from "./components/ChatWidget";
+// import ChatWidget from "./components/ChatWidget";
 
 export default function Home() {
   return (
@@ -30,7 +30,7 @@ export default function Home() {
       <MapSection />
       <Contact />
       <Footer />
-      <ChatWidget />
+      {/* <ChatWidget /> */}
     </>
   );
 }
