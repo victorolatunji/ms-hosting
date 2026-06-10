@@ -44,21 +44,21 @@ export const CITIES: City[] = [
     name: "Whitby",
     intro:
       "Whitby is home to Thermea Spa Village, one of the GTA's quietest weekend escapes, and both of our Whitby homes are within walking distance of it. If the goal of the trip is to do nothing, this is the right city.",
-    img: "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=1400&q=85",
+    img: "/cities/whitby.jpg",
   },
   {
     slug: "pickering",
     name: "Pickering",
     intro:
       "Pickering is a lakeside city just east of Toronto, with the GO Train, the 401, and easy access to nearby beaches and trails. Our Pickering home is a self-contained private suite, popular with couples who want a quiet base for a weekend or longer.",
-    img: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1400&q=85",
+    img: "/cities/pickering.jpg",
   },
   {
     slug: "uxbridge",
     name: "Uxbridge",
     intro:
       "Uxbridge is the GTA's countryside, an hour from downtown Toronto and yet a different world. Rolling hills, quiet roads, and our largest home, built for groups who want the city left behind for a few days.",
-    img: "https://images.unsplash.com/photo-1507371341162-763b5e419408?w=1400&q=85",
+    img: "/cities/uxbridge.jpg",
   },
   {
     slug: "mississauga",
