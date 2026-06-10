@@ -15,6 +15,9 @@ const NAV_LINKS = [
   { label: "Contact", href: "/#contact" },
 ];
 
+// Where the header CTA sends people: the host page, scrolled to its form.
+const HOST_HREF = "/become-a-host#host-form";
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [currency, setCurrency] = useState<Currency>("CAD");
@@ -93,9 +96,12 @@ export default function Header() {
             )}
           </div>
 
-          <button className="bg-moss text-bone border-none px-[22px] py-[11px] rounded-full text-[13px] font-medium cursor-pointer tracking-[0.02em]">
-            Sign in
-          </button>
+          <Link
+            href={HOST_HREF}
+            className="bg-moss text-bone px-[22px] py-[11px] rounded-full text-[13px] font-medium tracking-[0.02em] no-underline inline-block"
+          >
+            Become a Host
+          </Link>
         </nav>
 
         <button
@@ -136,9 +142,13 @@ export default function Header() {
             ))}
           </div>
 
-          <button className="w-full mt-3.5 bg-clay text-bone border-none p-3.5 rounded-full text-sm font-medium cursor-pointer">
-            Sign in
-          </button>
+          <Link
+            href={HOST_HREF}
+            onClick={() => setMenuOpen(false)}
+            className="block text-center w-full mt-3.5 bg-clay text-bone p-3.5 rounded-full text-sm font-medium no-underline"
+          >
+            Become a Host
+          </Link>
         </div>
       )}
     </header>
