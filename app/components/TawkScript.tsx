@@ -1,31 +1,52 @@
 "use client";
-// Loads the Tawk.to live chat widget on every page.
-// Uses Next.js's <Script> component with strategy="afterInteractive" so the
-// widget loads after the page is interactive, not blocking initial render.
-//
-// The widget ID lives in a public env var (NEXT_PUBLIC_TAWK_TO_ID) so it
-// can be rotated or swapped per environment without code changes.
-// Falls back gracefully when the env var is missing (renders nothing),
-// useful during local development if Tawk.to is disabled.
 
+import { useEffect } from "react";
 import Script from "next/script";
+
+const TAWK_PATTERN = /tawk\.to|Tawk_API/i;
+
+function suppressTawkConsoleNoise() {
+  const methods = ["log", "info", "debug", "warn", "error"] as const;
+  const original = {} as Record<(typeof methods)[number], (...a: unknown[]) => void>;
+
+  const isFromTawk = (args: unknown[]) => {
+    // Caller's stack: if tawk's script invoked console.*, its frame is here.
+    if (TAWK_PATTERN.test(new Error().stack ?? "")) return true;
+    // Or an Error/string argument that points back at tawk.
+    return args.some(
+      (a) =>
+        (a instanceof Error && TAWK_PATTERN.test(a.stack ?? a.message)) ||
+        (typeof a === "string" && TAWK_PATTERN.test(a))
+    );
+  };
+
+  for (const m of methods) {
+    original[m] = console[m].bind(console);
+    console[m] = (...args: unknown[]) => {
+      if (!isFromTawk(args)) original[m](...args);
+    };
+  }
+
+  // Restore on unmount so the patch doesn't leak across HMR/navigation.
+  return () => {
+    for (const m of methods) console[m] = original[m];
+  };
+}
 
 export default function TawkScript() {
   const widgetId = process.env.NEXT_PUBLIC_TAWK_TO_ID;
 
-  // No widget configured? Render nothing.
-  // Avoids ugly console errors and lets us deploy without Tawk.to wired up.
-  if (!widgetId) {
-    return null;
-  }
+  useEffect(() => {
+    if (!widgetId) return;
+    return suppressTawkConsoleNoise();
+  }, [widgetId]);
+
+  if (!widgetId) return null;
 
   return (
     <Script
       id="tawk-to-widget"
       strategy="afterInteractive"
-      // Inline script that injects the Tawk.to async loader.
-      // Identical to the embed snippet from Tawk.to's dashboard, just
-      // adapted to use the env var instead of a hardcoded ID.
       dangerouslySetInnerHTML={{
         __html: `
           var Tawk_API = Tawk_API || {};
