@@ -30,9 +30,9 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
   {
     title: "Legal",
     links: [
-      ["Terms", "#"],
-      ["Privacy policy", "#"],
-      ["Cookies", "#"],
+      ["Terms", "/terms"],
+      ["Privacy policy", "/privacy"],
+      ["Cookies", "/cookies"],
       ["Cancellations", "/cancellations"],
     ],
   },
