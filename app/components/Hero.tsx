@@ -1,7 +1,7 @@
 "use client";
 // Hero section. Hooks into SearchContext to submit search filters.
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Search, MapPin, Calendar, Users, ChevronDown } from "lucide-react";
 import Eyebrow from "./ui/Eyebrow";
 import { CITIES } from "@/lib/cities";
@@ -16,26 +16,6 @@ export default function Hero() {
   const [guests, setGuests] = useState<number>(0);
   const [cityOpen, setCityOpen] = useState<boolean>(false);
 
-  // Refs to the hidden date inputs so we can imperatively call showPicker()
-  // when the user clicks the visible cell.
-  const checkinRef = useRef<HTMLInputElement>(null);
-  const checkoutRef = useRef<HTMLInputElement>(null);
-
-  // Open the calendar picker for the given input.
-  // showPicker() is supported in all modern browsers and is the canonical
-  // way to programmatically open date pickers.
-  const openPicker = (inputRef: React.RefObject<HTMLInputElement | null>) => {
-    const el = inputRef.current;
-    if (!el) return;
-    try {
-      el.showPicker();
-    } catch {
-      // Older browsers without showPicker fall back to focusing,
-      // which at least lets the user start typing the date.
-      el.focus();
-    }
-  };
-
   const cityLabel = city
     ? CITIES.find((c) => c.slug === city)?.name ?? "Anywhere in the GTA"
     : "Anywhere in the GTA";
@@ -44,24 +24,15 @@ export default function Hero() {
     ? "Add guests"
     : `${guests} guest${guests === 1 ? "" : "s"}`;
 
-  const formatDate = (iso: string): string => {
-    if (!iso) return "Add dates";
-    try {
-      const [y, m, d] = iso.split("-").map(Number);
-      const date = new Date(y, (m ?? 1) - 1, d ?? 1);
-      return date.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
-    } catch {
-      return iso;
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitSearch({ city, checkin, checkout, guests });
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center px-6 pt-10 pb-20 md:px-6 md:pt-10 md:pb-20">
+    <section className="relative min-h-[90vh] flex items-center px-6 pt-10 pb-20 md:px-6 md:pt-10 md:pb-20 overflow-hidden">
+      {/* overflow-hidden on the section so the arch image can never push the
+          page wider than the viewport on mobile. */}
 
       <div
         className="
@@ -141,7 +112,7 @@ export default function Hero() {
             "
             style={{ animationDelay: ".3s" }}
           >
-            {/* WHERE cell with dropdown */}
+            {/* WHERE cell with city dropdown */}
             <div className="relative">
               <button
                 type="button"
@@ -185,56 +156,44 @@ export default function Hero() {
             </div>
 
             {/* CHECK IN.
-                The whole cell is a button that imperatively opens the
-                hidden input's calendar picker. Reliable across browsers. */}
-            <button
-              type="button"
-              onClick={() => openPicker(checkinRef)}
-              className="text-left px-[14px] py-3 rounded-xl cursor-pointer hover:bg-bone-soft transition-colors relative"
-            >
-              <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-ink-soft mb-1 flex items-center gap-1.5">
-                <Calendar size={14} /> Check in
-              </div>
-              <div className="text-sm font-medium text-ink truncate">
-                {formatDate(checkin)}
-              </div>
-              {/* The actual date input is tucked off-screen but still in the DOM,
-                  so its picker can be summoned. sr-only positions it for
-                  screen readers without affecting layout. */}
-              <input
-                ref={checkinRef}
-                type="date"
-                value={checkin}
-                onChange={(e) => setCheckin(e.target.value)}
-                aria-label="Check in date"
-                className="sr-only"
-              />
-            </button>
+                Native date input is now visible and styled to match the cell.
+                iOS shows its wheel picker, Android its calendar, desktop its popup picker.
+                Reliable across every browser. */}
+            <div className="px-[14px] py-3 rounded-xl hover:bg-bone-soft transition-colors">
+              <label className="block cursor-pointer">
+                <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-ink-soft mb-1 flex items-center gap-1.5">
+                  <Calendar size={14} /> Check in
+                </div>
+                <input
+                  type="date"
+                  value={checkin}
+                  onChange={(e) => setCheckin(e.target.value)}
+                  // Border, padding, font etc. all stripped so it blends in
+                  className="bg-transparent text-sm font-medium text-ink w-full border-none p-0 m-0 outline-none cursor-pointer"
+                  // iOS Safari needs this to render the placeholder color correctly
+                  style={{ minHeight: "1.25rem" }}
+                />
+              </label>
+            </div>
 
             {/* CHECK OUT, same pattern */}
-            <button
-              type="button"
-              onClick={() => openPicker(checkoutRef)}
-              className="text-left px-[14px] py-3 rounded-xl cursor-pointer hover:bg-bone-soft transition-colors relative"
-            >
-              <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-ink-soft mb-1 flex items-center gap-1.5">
-                <Calendar size={14} /> Check out
-              </div>
-              <div className="text-sm font-medium text-ink truncate">
-                {formatDate(checkout)}
-              </div>
-              <input
-                ref={checkoutRef}
-                type="date"
-                value={checkout}
-                onChange={(e) => setCheckout(e.target.value)}
-                min={checkin || undefined}
-                aria-label="Check out date"
-                className="sr-only"
-              />
-            </button>
+            <div className="px-[14px] py-3 rounded-xl hover:bg-bone-soft transition-colors">
+              <label className="block cursor-pointer">
+                <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-ink-soft mb-1 flex items-center gap-1.5">
+                  <Calendar size={14} /> Check out
+                </div>
+                <input
+                  type="date"
+                  value={checkout}
+                  onChange={(e) => setCheckout(e.target.value)}
+                  min={checkin || undefined}
+                  className="bg-transparent text-sm font-medium text-ink w-full border-none p-0 m-0 outline-none cursor-pointer"
+                  style={{ minHeight: "1.25rem" }}
+                />
+              </label>
+            </div>
 
-            {/* GUESTS with +/- stepper. No upper cap. */}
+            {/* GUESTS with stepper */}
             <div className="px-[14px] py-3 rounded-xl">
               <div className="font-mono text-[9px] tracking-[0.2em] uppercase text-ink-soft mb-1 flex items-center gap-1.5">
                 <Users size={14} /> Guests
