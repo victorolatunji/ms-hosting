@@ -1,13 +1,12 @@
 // API route at POST /api/inquiries.
 // Receives form submissions from anywhere on the site, validates them,
-// and inserts a row into the Supabase inquiries table.
-//
-// In Phase 3+ this is also where we'll fire off the Resend email and any
-// other side effects (Slack notification, etc.). One central pipeline.
+// inserts a row into the Supabase inquiries table, then fires the Resend
+// emails (owner notification + customer auto-reply). One central pipeline.
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { sendInquiryEmails } from "@/lib/email";
 
 // Zod schema describing what a valid form submission looks like.
 // Anything that doesn't match gets rejected with a 400 response.
@@ -35,23 +34,16 @@ const InquirySchema = z.object({
 
 export async function POST(req: Request) {
   // 1. Parse the incoming JSON body.
-  // If the body isn't valid JSON, return a friendly error.
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json(
-      { error: "Invalid request format" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid request format" }, { status: 400 });
   }
 
   // 2. Validate against the Zod schema.
-  // safeParse returns { success, data } or { success, error } without throwing.
   const result = InquirySchema.safeParse(body);
   if (!result.success) {
-    // Pull the first error message for the response.
-    // Treeified errors are also available if we want richer client display later.
     const firstIssue = result.error.issues[0];
     return NextResponse.json(
       { error: firstIssue?.message ?? "Invalid submission" },
@@ -59,10 +51,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // 3. Insert into Supabase.
-  // We're using the service-role client, so RLS is bypassed and the insert
-  // just happens. If something is wrong (table missing, schema mismatch),
-  // Supabase returns an error object we handle.
+  // 3. Insert into Supabase (service-role client, RLS bypassed).
   const { error } = await supabaseAdmin.from("inquiries").insert({
     type:              result.data.type,
     name:              result.data.name,
@@ -76,8 +65,6 @@ export async function POST(req: Request) {
   });
 
   if (error) {
-    // Log to the server console for debugging.
-    // Don't leak the error details to the client, those can hint at schema.
     console.error("Supabase insert error:", error);
     return NextResponse.json(
       { error: "Something went wrong on our end. Please try again." },
@@ -85,8 +72,11 @@ export async function POST(req: Request) {
     );
   }
 
-  // 4. Success. Return a small confirmation payload.
-  // The client uses this to switch the form into "thank you" state.
+  // 4. Side effect: send emails. The row is already saved, so we never fail
+  // the request on an email error — sendInquiryEmails swallows + logs its own.
+  await sendInquiryEmails(result.data);
+
+  // 5. Success.
   return NextResponse.json(
     { ok: true, message: "Thanks. We received your message and will reply soon." },
     { status: 200 }
