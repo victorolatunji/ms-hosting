@@ -1,7 +1,4 @@
-// Cookies page. Discloses what's actually running (Tawk.to chat, Sentry).
-// Keep this honest — update it if you add/remove tools that set cookies.
-//
-// Place at: /app/cookies/page.tsx
+// Cookies and on-device storage. Keep honest: update when tools change.
 
 import type { Metadata } from "next";
 import LegalLayout from "@/app/components/LegalLayout";
@@ -9,61 +6,73 @@ import LegalLayout from "@/app/components/LegalLayout";
 export const metadata: Metadata = {
   title: "Cookies | M&S Hosting",
   description: "How M&S Hosting Solutions uses cookies and similar technologies.",
+  alternates: { canonical: "/cookies" },
 };
 
 export default function CookiesPage() {
   return (
-    <LegalLayout title="Cookie Notice" updated="[Month] 2026">
+    <LegalLayout title="Cookies" updated="November 2026">
       <section>
         <p>
-          Cookies are small files stored on your device that help a website work and remember
-          things between visits. This notice explains the cookies this site uses.
-        </p>
-        <p>
-          <strong>This is a draft for client review.</strong> Confirm the list below matches the
-          tools actually running before this page goes live.
+          Cookies and similar browser storage are small pieces of information kept on your device
+          that help a website work and remember things between visits. Here is everything this site
+          uses. We do not use advertising cookies or sell any data.
         </p>
       </section>
 
       <section>
         <h2>Essential</h2>
         <p>
-          These keep the site working and cannot be turned off. They include cookies that help the
-          site load correctly and securely.
+          Needed for the site to work and stay secure, so they cannot be switched off. This includes the
+          sign-in cookie for our private admin area (used only by Sam and Maddie).
         </p>
+      </section>
+
+      <section>
+        <h2>Your preferences (kept on your device)</h2>
+        <ul>
+          <li><strong>Saved stays</strong>: the homes you tap the heart on</li>
+          <li><strong>Currency</strong>: the currency you choose for prices</li>
+        </ul>
+        <p>These stay in your browser and are never sent to us. Clearing your browser data removes them.</p>
       </section>
 
       <section>
         <h2>Live chat</h2>
         <p>
-          We use <strong>Tawk.to</strong> to power the chat widget. If you use the chat, Tawk.to
-          sets cookies to remember your conversation. See Tawk.to&apos;s own privacy policy for
-          details on what it stores.
+          Tawk.to powers our chat widget. It sets cookies to remember your conversation. See
+          Tawk.to&apos;s privacy policy for details.
+        </p>
+      </section>
+
+      <section>
+        <h2>Payments</h2>
+        <p>
+          When you book directly, you pay on Stripe&apos;s secure checkout page. Stripe uses cookies there
+          to process the payment safely and prevent fraud. See Stripe&apos;s privacy policy for details.
         </p>
       </section>
 
       <section>
         <h2>Error monitoring</h2>
         <p>
-          We use <strong>Sentry</strong> to detect and diagnose technical errors so we can keep the
-          site working properly. It may store limited technical information about your session to do
-          this.
+          Sentry helps us find and fix technical errors. It may record limited technical information
+          about your visit (such as browser type and the page where an error happened).
         </p>
       </section>
 
       <section>
         <h2>Managing cookies</h2>
         <p>
-          You can clear or block cookies in your browser settings at any time. Blocking some cookies
-          may affect how parts of the site work, such as the live chat.
+          You can clear or block cookies in your browser settings at any time. Blocking some may stop
+          parts of the site working, such as the chat or saved stays.
         </p>
       </section>
 
       <section>
         <h2>Contact us</h2>
         <p>
-          Questions about cookies? Email{" "}
-          <a href="mailto:info.mshostingsolutions@gmail.com">info.mshostingsolutions@gmail.com</a>.
+          Questions? Email <a href="mailto:info.mshostingsolutions@gmail.com">info.mshostingsolutions@gmail.com</a>.
         </p>
       </section>
     </LegalLayout>

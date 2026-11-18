@@ -12,7 +12,7 @@ type T = keyof typeof TYPES;
 type S = keyof typeof STATUS;
 
 type Row = {
-  id: string; created_at: string; type: string; name: string; email: string; subject: string | null;
+  id: string | number; created_at: string; type: string; name: string; email: string; subject: string | null;
   message: string; marketing_consent: boolean; property_slug: string | null; property_address: string | null;
   booking_date: string | null; status: S;
 };

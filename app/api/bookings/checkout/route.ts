@@ -21,6 +21,7 @@ const Schema = z.object({
   email: z.string().trim().email("Please provide a valid email").max(200),
   phone: z.string().trim().min(7, "Phone is required").max(40),
   notes: z.string().trim().max(1000).optional(),
+  agreed: z.literal(true, { message: "Please accept the house rules, cancellation policy and terms." }),
 });
 
 export async function POST(req: Request) {

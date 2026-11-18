@@ -27,10 +27,13 @@ export async function setListingStatus(slug: string, status: string) {
   revalidatePath("/", "layout"); // refresh the public site everywhere
 }
 
-export async function setInquiryStatus(id: string, status: string) {
+// Inquiry IDs may be numbers (the original table) or UUIDs (newer tables).
+const RowId = z.union([z.number().int().positive(), z.string().regex(/^\d+$/), z.string().uuid()]);
+
+export async function setInquiryStatus(id: string | number, status: string) {
   await requireAdmin();
   const parsed = InquiryStatus.safeParse(status);
-  if (!z.string().uuid().safeParse(id).success || !parsed.success) throw new Error("Invalid inquiry status");
+  if (!RowId.safeParse(id).success || !parsed.success) throw new Error("Invalid inquiry status");
 
   const { error } = await supabaseAdmin
     .from("inquiries")

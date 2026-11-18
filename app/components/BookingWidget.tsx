@@ -8,6 +8,8 @@ import { Lock, Minus, Plus } from "lucide-react";
 import InquiryForm from "./InquiryForm";
 import { quote, type DirectBookingConfig } from "@/lib/direct-booking";
 import { useCurrency } from "./CurrencyContext";
+import { DIRECT_CANCELLATION } from "@/lib/policies";
+import Link from "next/link";
 
 type Range = { start: string; end: string };
 type Config = Omit<DirectBookingConfig, "icalEnvVar">;
@@ -28,6 +30,7 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
   const [checkout, setCheckout] = useState("");
   const [guests, setGuests] = useState(1);
   const [form, setForm] = useState({ name: "", email: "", phone: "", notes: "" });
+  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -83,7 +86,7 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
   const tooShort = nights > 0 && nights < cfg.minNights;
   const badOrder = Boolean(checkin && checkout && nights <= 0);
   const canPay =
-    nights >= cfg.minNights && !clash && form.name.trim() && /\S+@\S+\.\S+/.test(form.email) && form.phone.trim().length >= 7;
+    agreed && nights >= cfg.minNights && !clash && form.name.trim() && /\S+@\S+\.\S+/.test(form.email) && form.phone.trim().length >= 7;
 
   const pay = async () => {
     setError("");
@@ -92,7 +95,7 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
       const res = await fetch("/api/bookings/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, checkin, checkout, guests, ...form, notes: form.notes || undefined }),
+        body: JSON.stringify({ slug, checkin, checkout, guests, ...form, notes: form.notes || undefined, agreed }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error ?? "Something went wrong.");
@@ -187,6 +190,23 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
         </>
       )}
 
+      {nights >= cfg.minNights && !clash && (
+        <div className="rounded-xl border border-line bg-bone-soft px-4 py-3 text-[12px] leading-[1.55] text-ink-soft">
+          <strong className="font-medium text-ink">Cancellation ({DIRECT_CANCELLATION.name}):</strong> {DIRECT_CANCELLATION.summary}
+        </div>
+      )}
+
+      {nights >= cfg.minNights && !clash && (
+        <label className="flex cursor-pointer items-start gap-2.5 text-[12px] leading-[1.5] text-ink-soft">
+          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 shrink-0 accent-clay" />
+          <span>
+            I&apos;m 18 or older and agree to the{" "}
+            <Link href="/cancellations#direct" target="_blank" className="text-clay">house rules and cancellation policy</Link> and the{" "}
+            <Link href="/terms" target="_blank" className="text-clay">terms</Link>.
+          </span>
+        </label>
+      )}
+
       {error && <div className="rounded-xl border border-clay/30 bg-clay/10 px-4 py-3 text-[13px] text-ink">{error}</div>}
 
       <button
@@ -204,7 +224,7 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
         </p>
       )}
       <p className="m-0 text-[12px] leading-[1.5] text-ink-soft">
-        Secure payment by Stripe, paid directly to your hosts. Check-in from {cfg.checkInTime}, check-out by {cfg.checkOutTime}.
+        Secure payment by Stripe, paid directly to your hosts. Check-in {cfg.checkInTime}, check-out by {cfg.checkOutTime}.
       </p>
     </div>
   );

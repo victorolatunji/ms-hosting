@@ -43,8 +43,10 @@ export const PROPERTIES: Property[] = [
     blurb: "A private studio suite with its own hot tub and fireplace. Our most-reviewed stay, and Sam's own home.",
     description: "A fully private studio suite with its own entrance through the backyard, a hot tub reserved just for you, a fireplace, and a 55-inch smart TV. The kitchenette covers the basics (no stove or oven), and the queen bed is made for slow mornings. Sam's family lives upstairs in a completely separate home, so help is always close but you will never share a door. Downtown Toronto is about thirty minutes away, with Thermea Spa, Frenchman's Bay, the Toronto Zoo, Durham Live and the Porsche Experience Centre all within fifteen. This is the one stay you can book instantly, direct with us.",
     goodToKnow: [
-      "Hot tub hours 7 pm to 11 pm, flexible on request. Children under 5 can't use the hot tub; older children with an adult.",
-      "For two guests only. No parties, visitors or gatherings.",
+      "Check-in 4 pm to midnight with a keypad, check-out by 10 am.",
+      "For two guests only. Not suitable for children aged 2 to 12. No parties, visitors or gatherings.",
+      "Hot tub hours 7 pm to 11 pm, flexible on request. Quiet hours 11 pm to 6 am.",
+      "A pet lives on the property, worth knowing if you have allergies.",
       "One exterior camera faces the entry door only. It does not see the hot tub or any private space.",
       "Parking for one small SUV-sized car. Early or late check-out $15 an hour, subject to availability.",
     ],

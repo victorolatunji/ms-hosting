@@ -39,8 +39,8 @@ export const DIRECT_BOOKING: Record<string, DirectBookingConfig> = {
     taxRate: 0, // TODO(Sam): set 0.13 only if the business is registered for HST
     minNights: 1,
     maxGuests: 2,
-    checkInTime: "4:00 pm",
-    checkOutTime: "11:00 am",
+    checkInTime: "4:00 pm to midnight",
+    checkOutTime: "10:00 am",
     icalEnvVar: "ICAL_HOT_TUB_OASIS",
   },
 };
