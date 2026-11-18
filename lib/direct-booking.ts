@@ -26,7 +26,7 @@ export type DirectBookingConfig = {
 
 // Prices mirror Sam's live Airbnb listing, read on 18 Nov 2026:
 // $149 weeknights, $299 Fri/Sat, 15% off 2+ nights, no cleaning fee, no tax line.
-// On top of that, the site gives 5% off for booking direct.
+// Sam wants direct prices to match Airbnb (no direct discount), Nov 2026.
 export const DIRECT_BOOKING: Record<string, DirectBookingConfig> = {
   "hot-tub-oasis": {
     live: true,
@@ -34,7 +34,7 @@ export const DIRECT_BOOKING: Record<string, DirectBookingConfig> = {
     weekdayRate: 149,
     weekendRate: 299,
     multiNightDiscount: { minNights: 2, percent: 15 },
-    directDiscountPercent: 5, // thank-you for booking direct (Airbnb takes ~15% from the host; Stripe ~3%)
+    directDiscountPercent: 0, // Sam: same price as Airbnb, no direct discount
     cleaningFee: 0,
     taxRate: 0, // TODO(Sam): set 0.13 only if the business is registered for HST
     minNights: 1,
