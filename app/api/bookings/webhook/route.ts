@@ -6,6 +6,8 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { verifyStripeSignature } from "@/lib/stripe";
 import { sendBookingEmails } from "@/lib/booking-email";
+import { sendWhatsAppAlert } from "@/lib/whatsapp";
+import { abs } from "@/lib/site";
 
 export async function POST(req: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -36,7 +38,17 @@ export async function POST(req: Request) {
       console.error("[webhook] confirm failed:", error);
       return NextResponse.json({ error: "DB error" }, { status: 500 }); // Stripe will retry
     }
-    if (booking) await sendBookingEmails(booking);
+    if (booking) {
+      await Promise.all([
+        sendBookingEmails(booking),
+        sendWhatsAppAlert(
+          "PAID booking",
+          `${booking.name} (${booking.phone})`,
+          `Hot Tub Oasis, ${booking.checkin} to ${booking.checkout}, ${booking.guests} guest${booking.guests === 1 ? "" : "s"}, $${(booking.amount_cents / 100).toFixed(2)} CAD`,
+          abs("/admin/bookings")
+        ),
+      ]);
+    }
   }
 
   if (event.type === "checkout.session.expired") {

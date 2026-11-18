@@ -157,3 +157,20 @@ textarea::placeholder {
   transform: translateZ(0); /* keep the clip on the GPU */
 }
 @media (prefers-reduced-motion: reduce) { .flow-edges { animation: none; } }
+
+/* ---- Mobile form fixes ----
+   1. iPhone zooms into any field under 16px and stays zoomed: use 16px on phones.
+   2. iOS date fields ignore the grid width (and collapse when empty): reset them. */
+@media (max-width: 767px) {
+  input, select, textarea { font-size: 16px !important; }
+}
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 1.5rem;
+}
+input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+input[type="date"]::-webkit-datetime-edit { padding: 0; }

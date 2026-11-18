@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { Send, Check } from "lucide-react";
+import { useCurrency } from "./CurrencyContext";
 
 export type InquiryFormProps = {
   // Submission type, distinguishes rows in the inquiries table.
@@ -69,6 +70,7 @@ export default function InquiryForm({
   });
 
   const [state, setState] = useState<SubmitState>({ kind: "idle" });
+  const { currency } = useCurrency();
 
   const updateField = <K extends keyof FormValues>(field: K, value: FormValues[K]) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -98,7 +100,7 @@ export default function InquiryForm({
       payload.property_slug = propertySlug;
     }
     if (askDates && (values.checkin || values.checkout)) {
-      payload.booking_date = `${values.checkin || "?"} to ${values.checkout || "?"}, ${values.guests} guest${values.guests === 1 ? "" : "s"}`;
+      payload.booking_date = `${values.checkin || "?"} to ${values.checkout || "?"}, ${values.guests} guest${values.guests === 1 ? "" : "s"}${currency !== "CAD" ? `, prefers ${currency}` : ""}`;
     }
 
     try {
@@ -220,19 +222,19 @@ export default function InquiryForm({
 
       {askDates && (
         <div className="grid grid-cols-2 gap-3">
-          <div>
+          <div className="min-w-0">
             <label htmlFor="iq-in" className="block font-mono text-[10px] tracking-[0.2em] uppercase mb-2 text-ink-soft">Check-in</label>
             <input
-              id="iq-in" type="date" required value={values.checkin}
+              id="iq-in" type="date" style={{ height: 50 }} required value={values.checkin}
               min={new Date().toLocaleDateString("en-CA")}
               onChange={(e) => updateField("checkin", e.target.value)} disabled={isSubmitting}
               className="w-full px-[15px] py-[13px] border border-line rounded-xl bg-transparent text-sm text-ink font-body disabled:opacity-60"
             />
           </div>
-          <div>
+          <div className="min-w-0">
             <label htmlFor="iq-out" className="block font-mono text-[10px] tracking-[0.2em] uppercase mb-2 text-ink-soft">Check-out</label>
             <input
-              id="iq-out" type="date" required value={values.checkout}
+              id="iq-out" type="date" style={{ height: 50 }} required value={values.checkout}
               min={values.checkin || new Date().toLocaleDateString("en-CA")}
               onChange={(e) => updateField("checkout", e.target.value)} disabled={isSubmitting}
               className="w-full px-[15px] py-[13px] border border-line rounded-xl bg-transparent text-sm text-ink font-body disabled:opacity-60"

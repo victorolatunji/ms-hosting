@@ -46,14 +46,11 @@ export default function Footer() {
     <footer className="bg-moss-dark text-bone/65 px-6 pt-[72px] pb-9 max-md:px-5 max-md:pt-14 max-md:pb-7">
       <div className="max-w-[1320px] mx-auto">
 
-        {/* Four-column grid */}
-        <div
-          className="grid gap-11 mb-14"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
-        >
+        {/* Brand full width on phones, then link columns side by side */}
+        <div className="mb-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 lg:gap-11">
 
           {/* Column 1: brand */}
-          <div>
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
               <Image
                 src="/images/logo.jpeg"
@@ -93,12 +90,12 @@ export default function Footer() {
           </div>
 
           {/* Columns 2-4: link lists */}
-          {COLUMNS.map((col) => (
-            <div key={col.title}>
+          {COLUMNS.map((col, i) => (
+            <div key={col.title} className={i === COLUMNS.length - 1 ? "col-span-2 sm:col-span-1" : ""}>
               <div className="font-mono text-amber text-[10px] tracking-[0.22em] uppercase mb-5">
                 {col.title}
               </div>
-              <ul className="list-none p-0 m-0 flex flex-col gap-[11px]">
+              <ul className={`list-none p-0 m-0 gap-[11px] ${i === COLUMNS.length - 1 ? "grid grid-cols-2 sm:flex sm:flex-col" : "flex flex-col"}`}>
                 {col.links.map(([label, href]) => {
                   // Use Next.js Link for internal routes (those starting with /).
                   // External / placeholder hrefs (# or http) use a plain <a>.
@@ -130,7 +127,7 @@ export default function Footer() {
 
         {/* Bottom strip: copyright + locality + developer credit */}
         <div className="border-t border-bone/10 pt-[26px] flex justify-between flex-wrap gap-4 text-[12px]">
-          <span>(C) 2026 M&amp;S Hosting Solutions. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} M&amp;S Hosting Solutions. All rights reserved.</span>
           <div className="flex items-center gap-5 flex-wrap">
             <span className="text-bone/50">
               Site by{" "}
@@ -140,9 +137,12 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="text-bone/70 hover:text-amber transition-colors no-underline"
               >
-                victor@vaolabs.dev
+                victorolatunji@vaolabs.dev
               </a>
             </span>
+            <Link href="/admin/login" className="text-bone/50 no-underline transition-colors hover:text-amber">
+              Team login
+            </Link>
             <span className="font-mono tracking-[0.12em] uppercase text-[10px]">
               Made with care in Ontario
             </span>

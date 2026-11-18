@@ -7,6 +7,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { sendInquiryEmails } from "@/lib/email";
+import { sendWhatsAppAlert } from "@/lib/whatsapp";
+import { getPropertyBySlug } from "@/lib/properties";
+import { abs } from "@/lib/site";
 
 // Zod schema describing what a valid form submission looks like.
 // Anything that doesn't match gets rejected with a 400 response.
@@ -71,7 +74,14 @@ export async function POST(req: Request) {
 
   // 4. Send emails. If the database save failed, the owner email is the
   // backup copy of the lead, so we only fail the request if BOTH failed.
-  const mail = await sendInquiryEmails(result.data);
+  const d = result.data;
+  const KIND = { contact: "message", property: "booking request", host: "become-a-host enquiry", cancellation: "cancellation request" } as const;
+  const stay = d.property_slug ? getPropertyBySlug(d.property_slug)?.name : null;
+  const details = [stay, d.booking_date, d.property_address, d.message.slice(0, 140)].filter(Boolean).join(" · ");
+  const [mail] = await Promise.all([
+    sendInquiryEmails(d),
+    sendWhatsAppAlert(KIND[d.type], `${d.name} (${d.email})`, details, abs("/admin/inbox")),
+  ]);
 
   if (error && !mail.ownerOk) {
     return NextResponse.json(

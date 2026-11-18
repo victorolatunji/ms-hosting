@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Lock, Minus, Plus } from "lucide-react";
 import InquiryForm from "./InquiryForm";
 import { quote, type DirectBookingConfig } from "@/lib/direct-booking";
+import { useCurrency } from "./CurrencyContext";
 
 type Range = { start: string; end: string };
 type Config = Omit<DirectBookingConfig, "icalEnvVar">;
@@ -14,13 +15,13 @@ type Avail = { open: boolean; blocked: Range[]; config: Config };
 
 const toDay = (s: string) => { const [y, m, d] = s.split("-").map(Number); return Date.UTC(y, m - 1, d); };
 const todayStr = () => new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD, local
-const cad = (n: number) => n.toLocaleString("en-CA", { style: "currency", currency: "CAD" });
 
 const inputCls =
   "w-full px-[15px] py-[13px] border border-line rounded-xl bg-transparent text-sm text-ink font-body disabled:opacity-60";
 const labelCls = "block font-mono text-[10px] tracking-[0.2em] uppercase mb-2 text-ink-soft";
 
 export default function BookingWidget({ slug, name }: { slug: string; name: string }) {
+  const { currency, format: cad } = useCurrency();
   const [avail, setAvail] = useState<Avail | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
   const [checkin, setCheckin] = useState("");
@@ -114,13 +115,13 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div>
+        <div className="min-w-0">
           <label className={labelCls} htmlFor="bk-in">Check-in</label>
-          <input id="bk-in" type="date" min={todayStr()} value={checkin} onChange={(e) => setCheckin(e.target.value)} className={inputCls} />
+          <input id="bk-in" type="date" style={{ height: 50 }} min={todayStr()} value={checkin} onChange={(e) => setCheckin(e.target.value)} className={inputCls} />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className={labelCls} htmlFor="bk-out">Check-out</label>
-          <input id="bk-out" type="date" min={checkin || todayStr()} value={checkout} onChange={(e) => setCheckout(e.target.value)} className={inputCls} />
+          <input id="bk-out" type="date" style={{ height: 50 }} min={checkin || todayStr()} value={checkout} onChange={(e) => setCheckout(e.target.value)} className={inputCls} />
         </div>
       </div>
 
@@ -196,6 +197,12 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
       >
         <Lock size={14} /> {submitting ? "Opening secure payment..." : "Book now"}
       </button>
+      {currency !== "CAD" && (
+        <p className="m-0 rounded-lg bg-bone-soft px-3 py-2 text-[12px] leading-[1.5] text-ink-soft">
+          Prices shown in {currency} at today&apos;s rate, for guidance. You&apos;ll be charged in Canadian dollars
+          {price ? ` (${price.total.toLocaleString("en-CA", { style: "currency", currency: "CAD" })} CAD)` : ""}; your bank converts it.
+        </p>
+      )}
       <p className="m-0 text-[12px] leading-[1.5] text-ink-soft">
         Secure payment by Stripe, paid directly to your hosts. Check-in from {cfg.checkInTime}, check-out by {cfg.checkOutTime}.
       </p>

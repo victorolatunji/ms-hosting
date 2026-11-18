@@ -93,7 +93,7 @@ export default function MapSection({ properties = PROPERTIES }: { properties?: P
             <Link
               href="/cities/sudbury"
               aria-label={`Sudbury, ${SUDBURY_COUNT} stays, about four hours north`}
-              className="group absolute left-3 top-3 z-10 flex items-center gap-2.5 rounded-xl border border-line bg-bone/90 px-3 py-2 shadow-[0_6px_18px_-8px_rgba(31,37,33,0.45)] backdrop-blur-sm transition-colors hover:border-clay md:left-5 md:top-5"
+              className="group absolute right-3 top-3 z-10 flex items-center gap-2.5 rounded-xl border border-line bg-bone/90 px-3 py-2 shadow-[0_6px_18px_-8px_rgba(31,37,33,0.45)] backdrop-blur-sm transition-colors hover:border-clay md:right-5 md:top-5"
             >
               <span
                 className="flex h-7 w-7 items-center justify-center rounded-full bg-clay text-bone ring-2 ring-bone md:h-8 md:w-8"

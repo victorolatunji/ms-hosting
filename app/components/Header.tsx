@@ -6,8 +6,8 @@ import Link from "next/link";
 import { Menu, X, Globe, ChevronDown } from "lucide-react";
 import SavedLink from "./SavedLink";
 
-const CURRENCIES = ["CAD", "USD", "EUR", "GBP", "AUD"] as const;
-type Currency = (typeof CURRENCIES)[number];
+import { CURRENCIES } from "@/lib/currency";
+import { useCurrency } from "./CurrencyContext";
 
 const NAV_LINKS = [
   { label: "Stays", href: "/#stays" },
@@ -21,7 +21,7 @@ const HOST_HREF = "/become-a-host#host-form";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [currency, setCurrency] = useState<Currency>("CAD");
+  const { currency, setCurrency } = useCurrency();
   const [showCurrency, setShowCurrency] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 

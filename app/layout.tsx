@@ -3,6 +3,7 @@ import { Cormorant_Garamond, DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import TawkScript from "./components/TawkScript";
 import MobileNav from "./components/MobileNav";
+import { CurrencyProvider } from "./components/CurrencyContext";
 import JsonLd from "./components/JsonLd";
 import { SITE_URL, SITE_NAME, PHONE, EMAIL, INSTAGRAM, abs } from "@/lib/site";
 
@@ -59,8 +60,10 @@ export default function RootLayout({
       className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} antialiased`}
     >
       <body className="pb-[68px] md:pb-0">
-        {children}
-        <MobileNav />
+        <CurrencyProvider>
+          {children}
+          <MobileNav />
+        </CurrencyProvider>
         <JsonLd
           data={{
             "@context": "https://schema.org",
