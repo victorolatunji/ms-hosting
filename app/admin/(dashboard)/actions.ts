@@ -43,3 +43,13 @@ export async function setInquiryStatus(id: string | number, status: string) {
 
   revalidatePath("/admin", "layout");
 }
+
+// Cancel a direct booking: frees the dates on the site and in the calendar feed
+// Airbnb imports. Refunds are done separately in Stripe (the button links there).
+export async function cancelBooking(id: string) {
+  await requireAdmin();
+  if (!z.string().uuid().safeParse(id).success) throw new Error("Invalid booking");
+  const { error } = await supabaseAdmin.from("bookings").update({ status: "cancelled" }).eq("id", id);
+  if (error) throw new Error(`Could not save: ${error.message}`);
+  revalidatePath("/admin", "layout");
+}

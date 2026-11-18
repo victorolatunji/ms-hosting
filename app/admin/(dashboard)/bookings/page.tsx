@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { getPropertyBySlug } from "@/lib/properties";
 import { isDirectBookingOpen } from "@/lib/direct-booking";
 import { DbDown, PageTitle, Pill, when } from "../ui";
+import { cancelBooking } from "../actions";
 
 type Row = {
   id: string; created_at: string; property_slug: string; checkin: string; checkout: string; guests: number;
@@ -57,11 +58,21 @@ export default async function Bookings() {
                 {r.name} · <a href={`mailto:${r.email}`} className="text-clay no-underline">{r.email}</a> · <a href={`tel:${r.phone}`} className="text-clay no-underline">{r.phone}</a>
               </div>
               {r.notes && <p className="m-0 mt-2 text-[14px] text-ink-soft">“{r.notes}”</p>}
-              {r.stripe_payment_intent && (
-                <a href={`https://dashboard.stripe.com/payments/${r.stripe_payment_intent}`} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-[13px] text-clay">
-                  Open in Stripe ↗
-                </a>
-              )}
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                {r.stripe_payment_intent && (
+                  <a href={`https://dashboard.stripe.com/payments/${r.stripe_payment_intent}`} target="_blank" rel="noopener noreferrer" className="rounded-full border border-line px-4 py-2 text-[13px] text-ink no-underline hover:border-clay">
+                    Refund in Stripe ↗
+                  </a>
+                )}
+                <form action={cancelBooking.bind(null, r.id)}>
+                  <button className="cursor-pointer rounded-full border border-clay/40 bg-transparent px-4 py-2 text-[13px] text-clay hover:bg-clay/10">
+                    Cancel booking (free the dates)
+                  </button>
+                </form>
+              </div>
+              <p className="m-0 mt-2 text-[12px] text-ink-soft">
+                To cancel: refund the right amount in Stripe first (see the cancellation policy), then cancel here.
+              </p>
             </li>
           ))}
         </ul>
