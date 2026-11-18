@@ -1,7 +1,9 @@
+import { PROPERTIES } from "@/lib/properties";
+import { capWords } from "@/lib/words";
 import { Wifi, Car, Wind, Coffee, Bath, Award, Quote, Phone } from "lucide-react";
 import Eyebrow from "./ui/Eyebrow";
 
-// About section, the Maddie & Sam story.
+// About section, the Sam & Maddie story.
 // Server component, no interactivity.
 // Lives on a dark moss background, so most text uses bone/amber colors instead of ink.
 
@@ -43,7 +45,7 @@ export default function About() {
             className="font-display m-0 mb-8 leading-[1.08] text-bone"
             style={{ fontSize: "clamp(34px, 4.5vw, 56px)" }}
           >
-            Madeline and Samuel{" "}
+            Sam and Maddie{" "}
             <span className="italic text-amber block mt-1">Jean-Louis.</span>
           </h2>
 
@@ -59,7 +61,7 @@ export default function About() {
             text that gets answered the same hour you send it.
           </p>
           <p className="text-[17px] leading-[1.75] text-bone/82 mb-8">
-            Eleven homes later, we are still the ones who set up your check-in,
+            {capWords(PROPERTIES.length)} homes later, we are still the ones who set up your check-in,
             restock the coffee, and pick up when you call. That part will not
             change.
           </p>
@@ -72,7 +74,7 @@ export default function About() {
             </div>
             <div>
               <div className="font-display text-[17px] text-bone italic">
-                Maddie &amp; Sam
+                Sam &amp; Maddie
               </div>
               {/* tel: link so mobile users can tap-to-call */}
               <a

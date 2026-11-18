@@ -50,6 +50,8 @@ export default function TawkScript() {
       dangerouslySetInnerHTML={{
         __html: `
           var Tawk_API = Tawk_API || {};
+          // Lift the chat bubble above the mobile bottom bar.
+          Tawk_API.customStyle = { visibility: { mobile: { position: "br", xOffset: 12, yOffset: 84 } } };
           var Tawk_LoadStart = new Date();
           (function(){
             var s1 = document.createElement("script");

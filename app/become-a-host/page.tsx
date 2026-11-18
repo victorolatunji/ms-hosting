@@ -11,7 +11,7 @@ import InquiryForm from "@/app/components/InquiryForm";
 export const metadata: Metadata = {
   title: "Become a host | M&S Hosting",
   description:
-    "Have a property in the Greater Toronto Area? Let Madeline and Samuel Jean-Louis take the day-to-day off your hands.",
+    "Have a property in Ontario? Let Sam and Maddie Jean-Louis take the day-to-day off your hands.",
 };
 
 const PERKS: [React.ComponentType<{ size?: number; className?: string }>, string, string][] = [
@@ -77,7 +77,7 @@ export default function BecomeAHost() {
           </div>
 
           {/* RIGHT: form card. Sticky only on desktop. */}
-          <div className="lg:sticky lg:top-24 lg:self-start">
+          <div id="host-form" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
             <div className="bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
               <Eyebrow>Tell us about your home</Eyebrow>
               <div

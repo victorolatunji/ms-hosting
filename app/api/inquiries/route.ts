@@ -65,16 +65,20 @@ export async function POST(req: Request) {
   });
 
   if (error) {
+    // Log loudly (Sentry picks this up) but do NOT drop the lead.
     console.error("Supabase insert error:", error);
+  }
+
+  // 4. Send emails. If the database save failed, the owner email is the
+  // backup copy of the lead, so we only fail the request if BOTH failed.
+  const mail = await sendInquiryEmails(result.data);
+
+  if (error && !mail.ownerOk) {
     return NextResponse.json(
-      { error: "Something went wrong on our end. Please try again." },
+      { error: "Something went wrong on our end. Please call or email us directly." },
       { status: 500 }
     );
   }
-
-  // 4. Side effect: send emails. The row is already saved, so we never fail
-  // the request on an email error — sendInquiryEmails swallows + logs its own.
-  await sendInquiryEmails(result.data);
 
   // 5. Success.
   return NextResponse.json(

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import Eyebrow from "./ui/Eyebrow";
 import { CITIES } from "@/lib/cities";
-import { PROPERTIES } from "@/lib/properties";
+import { PROPERTIES, type Property } from "@/lib/properties";
+import { capWords, toWords } from "@/lib/words";
 
 // Cities section on the homepage. Each card links to /cities/[slug].
 // Server component, only CSS hover effects for interactivity.
@@ -10,11 +11,11 @@ import { PROPERTIES } from "@/lib/properties";
 // Count properties per city for the "2 homes" pill on each card.
 // Derived live from the properties data so it stays accurate as
 // properties are added or removed.
-function countPropertiesInCity(citySlug: string): number {
-  return PROPERTIES.filter((p) => p.citySlug === citySlug).length;
+function countPropertiesInCity(list: Property[], citySlug: string): number {
+  return list.filter((p) => p.citySlug === citySlug).length;
 }
 
-export default function Cities() {
+export default function Cities({ properties = PROPERTIES }: { properties?: Property[] }) {
   return (
     <section id="cities" className="px-6 py-[110px] max-md:px-5 max-md:py-[70px]">
       <div className="max-w-[1320px] mx-auto">
@@ -27,8 +28,8 @@ export default function Cities() {
               className="font-display m-0 leading-[1.05] text-moss"
               style={{ fontSize: "clamp(34px, 5vw, 60px)" }}
             >
-              Seven cities,{" "}
-              <span className="italic text-clay">eleven doorsteps.</span>
+              {capWords(CITIES.length)} cities,{" "}
+              <span className="italic text-clay">{toWords(properties.length)} doorsteps.</span>
             </h2>
           </div>
           <a
@@ -45,7 +46,7 @@ export default function Cities() {
           style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}
         >
           {CITIES.map((city, i) => {
-            const count = countPropertiesInCity(city.slug);
+            const count = countPropertiesInCity(properties, city.slug);
             return (
               <Link
                 key={city.slug}

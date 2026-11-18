@@ -55,14 +55,15 @@ export default function PrivacyPage() {
       <section>
         <h2>How it is stored and who can see it</h2>
         <p>
-          Your information is stored securely and is accessible only to Madeline and Samuel
+          Your information is stored securely and is accessible only to Sam and Maddie
           Jean-Louis. We use the following trusted service providers to operate this site:
         </p>
         <ul>
-          <li><strong>Supabase</strong> — stores your enquiry (hosted in Canada)</li>
-          <li><strong>Resend</strong> — sends our email replies and notifications</li>
-          <li><strong>Tawk.to</strong> — powers the live chat widget, if you use it</li>
-          <li><strong>Vercel</strong> — hosts this website</li>
+          <li><strong>Supabase</strong>: stores your enquiry or booking (hosted in Canada)</li>
+          <li><strong>Resend</strong>: sends our email replies and notifications</li>
+          <li><strong>Tawk.to</strong>: powers the live chat widget, if you use it</li>
+          <li><strong>Vercel</strong>: hosts this website</li>
+          <li><strong>Stripe</strong>: processes payments for direct bookings. We never see or store your card details</li>
         </ul>
         <p>
           We do not sell your personal information. We keep your information for [retention period

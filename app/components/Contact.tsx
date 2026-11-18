@@ -38,7 +38,7 @@ export default function Contact() {
               Questions? <span className="italic text-clay">Just ask.</span>
             </h2>
             <p className="text-[15px] leading-[1.65] text-ink-soft mb-8">
-              Send a booking enquiry and Maddie or Sam will reply within the hour
+              Send a booking enquiry and Sam or Maddie will reply within the hour
               during the day, or first thing the next morning.
             </p>
 

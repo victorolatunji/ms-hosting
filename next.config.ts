@@ -2,7 +2,20 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Renamed and retired listing URLs.
+  async redirects() {
+    return [
+      { source: "/stays/fully-private-hot-tub-suite", destination: "/stays/hot-tub-oasis", permanent: true },
+      { source: "/stays/cozy-toes-city-glows", destination: "/stays/fire-pit-guest-suite", permanent: true },
+      // Homes M&S no longer host (removed Nov 2026).
+      { source: "/stays/4br-retreat-hot-tub", destination: "/cities/oshawa", permanent: true },
+      { source: "/stays/spacious-home-movie-lounge", destination: "/cities/ajax", permanent: true },
+      { source: "/stays/luxury-recreation-retreat", destination: "/#stays", permanent: true },
+      { source: "/stays/modern-townhouse-square-one", destination: "/#stays", permanent: true },
+      { source: "/cities/uxbridge", destination: "/#cities", permanent: true },
+      { source: "/cities/mississauga", destination: "/#cities", permanent: true },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {

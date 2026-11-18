@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Full-size photo originals (site uses the compressed WebP copies in public/)
+/photo-originals/

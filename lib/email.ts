@@ -52,7 +52,7 @@ function shell(inner: string) {
     </div>
     <div style="padding:28px">${inner}</div>
     <div style="padding:18px 28px;border-top:1px solid ${C.line};font-size:12px;color:${C.inkSoft};line-height:1.6">
-      M&amp;S Hosting Solutions · Greater Toronto Area<br/>
+      M&amp;S Hosting Solutions · Ontario<br/>
       <a href="mailto:${NOTIFY_TO}" style="color:${C.clay};text-decoration:none">${NOTIFY_TO}</a> · (905) 922-6538
     </div>
   </div>
@@ -74,7 +74,7 @@ function ownerHtml(d: Inquiry) {
     d.subject ? row("Subject", esc(d.subject)) : "",
     d.property_slug ? row("Property", esc(d.property_slug)) : "",
     d.property_address ? row("Address", esc(d.property_address)) : "",
-    d.booking_date ? row("Booking date", esc(d.booking_date)) : "",
+    d.booking_date ? row(d.type === "property" ? "Dates" : "Booking date", esc(d.booking_date)) : "",
     row("Marketing", d.marketing_consent ? "Opted in" : "No"),
   ].join("");
 
@@ -96,7 +96,7 @@ function customerHtml(d: Inquiry) {
   return shell(`
     <h1 style="margin:0 0 16px;font-family:Georgia,serif;font-weight:500;font-size:26px;color:${C.moss}">Thanks, ${esc(first)}.</h1>
     <p style="margin:0 0 14px;font-size:16px;line-height:1.65;color:${C.ink}">
-      We've received your ${TYPE_LABEL[d.type]} and it's landed with us personally. One of us, Madeline or Samuel, will be in touch soon with the details you asked about.
+      We've received your ${TYPE_LABEL[d.type]} and it's landed with us personally. One of us, Sam or Maddie, will be in touch soon with the details you asked about.
     </p>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.65;color:${C.ink}">
       We host every one of our stays in person, so you'll always be talking to the people who actually keep the keys.
@@ -106,7 +106,7 @@ function customerHtml(d: Inquiry) {
       <p style="margin:0;font-size:15px;line-height:1.6;color:${C.ink}">${nl2br(d.message)}</p>
     </div>
     <p style="margin:0;font-size:16px;line-height:1.65;color:${C.ink}">
-      Warmly,<br/><span style="font-family:Georgia,serif;font-size:18px;color:${C.moss}">Madeline &amp; Samuel</span>
+      Warmly,<br/><span style="font-family:Georgia,serif;font-size:18px;color:${C.moss}">Sam &amp; Maddie</span>
     </p>
   `);
 }
@@ -121,7 +121,7 @@ function ownerText(d: Inquiry) {
     d.subject && `Subject: ${d.subject}`,
     d.property_slug && `Property: ${d.property_slug}`,
     d.property_address && `Address: ${d.property_address}`,
-    d.booking_date && `Booking date: ${d.booking_date}`,
+    d.booking_date && `${d.type === "property" ? "Dates" : "Booking date"}: ${d.booking_date}`,
     `Marketing: ${d.marketing_consent ? "Opted in" : "No"}`,
     ``,
     `Message:`,
@@ -135,14 +135,14 @@ function customerText(d: Inquiry) {
   return [
     `Thanks, ${first}.`,
     ``,
-    `We've received your ${TYPE_LABEL[d.type]} and Madeline or Samuel will be in touch soon.`,
+    `We've received your ${TYPE_LABEL[d.type]} and Sam or Maddie will be in touch soon.`,
     `We host every stay in person, so you'll always reach the people who keep the keys.`,
     ``,
     `A copy of your note:`,
     d.message,
     ``,
     `Warmly,`,
-    `Madeline & Samuel — M&S Hosting Solutions`,
+    `Sam & Maddie, M&S Hosting Solutions`,
     `${NOTIFY_TO} · (905) 922-6538`,
   ].join("\n");
 }
@@ -150,8 +150,8 @@ function customerText(d: Inquiry) {
 // Fire both emails. Never throws — returns a small status for logging.
 export async function sendInquiryEmails(d: Inquiry) {
   if (!resend) {
-    console.warn("[email] RESEND_API_KEY not set — skipping send.");
-    return { sent: false, reason: "no_api_key" as const };
+    console.warn("[email] RESEND_API_KEY not set, skipping send.");
+    return { sent: false, ownerOk: false, reason: "no_api_key" as const };
   }
 
   const results = await Promise.allSettled([
@@ -179,5 +179,7 @@ export async function sendInquiryEmails(d: Inquiry) {
     else if (r.value.error) console.error(`[email] ${which} send error:`, r.value.error);
   });
 
-  return { sent: true };
+  const owner = results[0];
+  const ownerOk = owner.status === "fulfilled" && !owner.value.error;
+  return { sent: true, ownerOk };
 }

@@ -43,7 +43,7 @@ export default function CancellationsPage() {
 
           <p className="mt-7 text-[17px] leading-[1.75] text-ink-soft m-0">
             Life happens. If you need to cancel or move your dates, send us
-            a quick note with the details and Maddie or Sam will reply directly
+            a quick note with the details and Sam or Maddie will reply directly
             with options.
           </p>
 

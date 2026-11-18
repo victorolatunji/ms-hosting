@@ -1,6 +1,7 @@
-// Homepage. SearchProvider wraps the whole tree so Hero and Properties can
-// share filter state via context, even though other sections (Marquee, Cities)
-// sit between them in the rendered order.
+// Homepage. SearchProvider wraps Hero + Properties so they share filter state.
+// The listing list comes from getPublicProperties(), so admin status changes
+// (unavailable / hidden) show up here. Refreshed at most every 60 seconds,
+// and immediately when the admin saves a change.
 
 import Header from "./components/Header";
 import { SearchProvider } from "./components/SearchContext";
@@ -12,25 +13,25 @@ import About from "./components/About";
 import MapSection from "./components/MapSection";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-// import ChatWidget from "./components/ChatWidget";
+import { getPublicProperties } from "@/lib/listing-status";
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function Home() {
+  const properties = await getPublicProperties();
   return (
     <>
       <Header />
-      {/* Provider wraps Hero + Properties so they can share search state.
-          Other sections in between render normally; they just ignore the context. */}
       <SearchProvider>
-        <Hero />
-        <Marquee />
-        <Cities />
-        <Properties />
+        <Hero properties={properties} />
+        <Marquee properties={properties} />
+        <Cities properties={properties} />
+        <Properties properties={properties} />
       </SearchProvider>
       <About />
-      <MapSection />
+      <MapSection properties={properties} />
       <Contact />
       <Footer />
-      {/* <ChatWidget /> */}
     </>
   );
 }

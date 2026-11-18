@@ -7,6 +7,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth, signOut } from "@/auth";
+import AdminNav from "./AdminNav";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Admin | M&S Hosting", robots: { index: false, follow: false } };
+export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -36,7 +41,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </form>
         </div>
       </header>
-      <main className="mx-auto max-w-[1100px] px-6 py-10">{children}</main>
+      <AdminNav />
+      <main className="mx-auto max-w-[1100px] px-4 py-8 md:px-6 md:py-10">{children}</main>
     </div>
   );
 }

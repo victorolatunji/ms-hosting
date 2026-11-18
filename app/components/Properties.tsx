@@ -4,26 +4,28 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Heart, Star, X } from "lucide-react";
+import { Star, X } from "lucide-react";
 import Eyebrow from "./ui/Eyebrow";
-import { PROPERTIES } from "@/lib/properties";
+import { PROPERTIES, type Property } from "@/lib/properties";
 import { CITIES } from "@/lib/cities";
 import { useSearch } from "./SearchContext";
+import { toWords } from "@/lib/words";
+import SaveButton from "./SaveButton";
+import { PERKS, badgeFor, perksFor, type PerkId } from "@/lib/perks";
 
-export default function Properties() {
+// Mood chips: only moods that at least one home actually matches.
+const moodsFor = (list: Property[]) =>
+  (Object.keys(PERKS) as PerkId[])
+    .map((id) => ({ id, label: PERKS[id].mood, count: list.filter((p) => !p.unavailable && perksFor(p).includes(id)).length }))
+    .filter((m) => m.count > 0);
+
+export default function Properties({ properties = PROPERTIES }: { properties?: Property[] }) {
+  const MOODS = moodsFor(properties);
   // Hooks into the search context
   const { filters, clearFilters, propertiesRef } = useSearch();
 
-  // Favorites state, unchanged
-  const [favorites, setFavorites] = useState<Set<number>>(new Set());
-  const toggleFav = (id: number) => {
-    setFavorites((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  // "Pick your mood" chip (local to this section)
+  const [mood, setMood] = useState<PerkId | null>(null);
 
   // Detect if any filter is active. Dates count even though we don't
   // filter on them, so the user sees the dates carried in the banner.
@@ -31,15 +33,17 @@ export default function Properties() {
     filters.city !== "" ||
     filters.guests > 0 ||
     filters.checkin !== "" ||
-    filters.checkout !== "";
+    filters.checkout !== "" ||
+    mood !== null;
 
-  // Filter the 11 properties.
+  // Filter the properties.
   // City: must match (or empty = match any)
   // Guests: property must sleep at least that many (or 0 = no filter)
   // Dates: not filtered, just informational
-  const filteredProperties = PROPERTIES.filter((p) => {
+  const filteredProperties = properties.filter((p) => {
     if (filters.city && p.citySlug !== filters.city) return false;
     if (filters.guests > 0 && p.guests < filters.guests) return false;
+    if (mood && !perksFor(p).includes(mood)) return false;
     return true;
   });
 
@@ -53,6 +57,7 @@ export default function Properties() {
   ];
   if (cityName) bannerParts.push(`in ${cityName}`);
   if (filters.guests > 0) bannerParts.push(`for ${filters.guests} guest${filters.guests === 1 ? "" : "s"}`);
+  if (mood) bannerParts.push(`· ${PERKS[mood].mood.toLowerCase()}`);
   const bannerText = bannerParts.join(" ");
 
   return (
@@ -75,6 +80,30 @@ export default function Properties() {
           </h2>
         </div>
 
+        {/* Pick your mood */}
+        <div className="-mx-5 mb-8 overflow-x-auto px-5 [scrollbar-width:none] md:mx-0 md:px-0">
+          <div className="flex w-max gap-2 md:w-auto md:flex-wrap" role="group" aria-label="Pick your mood">
+            <button
+              onClick={() => setMood(null)}
+              aria-pressed={mood === null}
+              className={`cursor-pointer rounded-full border px-4 py-2 text-[13px] transition-colors ${mood === null ? "border-moss bg-moss text-bone" : "border-line bg-bone text-ink hover:border-clay"}`}
+            >
+              All homes
+            </button>
+            {MOODS.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => setMood(mood === m.id ? null : m.id)}
+                aria-pressed={mood === m.id}
+                className={`flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-[13px] transition-colors ${mood === m.id ? "border-clay bg-clay text-bone" : "border-line bg-bone text-ink hover:border-clay"}`}
+              >
+                {m.label}
+                <span className={`font-mono text-[10px] ${mood === m.id ? "text-bone/80" : "text-ink-soft"}`}>{m.count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Filter banner */}
         {isFiltering && (
           <div className="mb-8 flex items-center justify-between flex-wrap gap-3 bg-clay/8 border border-clay/30 rounded-[14px] px-5 py-3.5">
@@ -88,7 +117,7 @@ export default function Properties() {
               )}
             </div>
             <button
-              onClick={clearFilters}
+              onClick={() => { clearFilters(); setMood(null); }}
               className="inline-flex items-center gap-1.5 text-[13px] text-clay font-medium cursor-pointer hover:underline border-none bg-transparent"
             >
               <X size={13} /> Show all
@@ -105,10 +134,10 @@ export default function Properties() {
             <p className="text-[14px] text-ink-soft max-w-[420px] mx-auto leading-[1.65] mb-6 m-0">
               Try a different city or fewer guests, or just{" "}
               <button
-                onClick={clearFilters}
+                onClick={() => { clearFilters(); setMood(null); }}
                 className="text-clay underline cursor-pointer border-none bg-transparent p-0 text-[14px]"
               >
-                show all eleven homes
+                show all {toWords(properties.length)} homes
               </button>
               {" "}and message us with what you are looking for.
             </p>
@@ -127,7 +156,7 @@ export default function Properties() {
                       className="absolute top-3.5 left-1/2 z-[5] bg-ink text-bone px-3.5 py-1.5 rounded text-[11px] tracking-[0.15em] uppercase font-medium font-mono"
                       style={{ transform: "translateX(-50%) rotate(-3deg)" }}
                     >
-                      Not available for hosting
+                      Not available right now
                     </div>
                   )}
 
@@ -139,29 +168,15 @@ export default function Properties() {
                       className={`img-zoom w-full h-full object-cover ${p.unavailable ? "grayscale-[.6]" : ""}`}
                     />
 
-                    {p.tag && !p.unavailable && (
+                    {badgeFor(p) && !p.unavailable && (
                       <div className="absolute top-3.5 left-3.5 bg-bone text-moss px-3 py-1.5 rounded-full text-[11px] font-medium tracking-[0.02em] flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 bg-clay rotate-45" />
-                        {p.tag}
+                        {badgeFor(p)}
                       </div>
                     )}
 
                     {!p.unavailable && (
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          toggleFav(p.id);
-                        }}
-                        aria-label="Save"
-                        className="absolute top-3 right-3 w-[38px] h-[38px] rounded-full bg-bone/95 backdrop-blur-sm border-none cursor-pointer flex items-center justify-center"
-                      >
-                        <Heart
-                          size={16}
-                          fill={favorites.has(p.id) ? "var(--color-clay)" : "none"}
-                          color={favorites.has(p.id) ? "var(--color-clay)" : "var(--color-moss)"}
-                        />
-                      </button>
+                      <SaveButton slug={p.slug} name={p.name} className="absolute top-3 right-3" />
                     )}
                   </div>
 
@@ -191,14 +206,22 @@ export default function Properties() {
                     </div>
 
                     <div className="flex justify-between items-center border-t border-line pt-3.5">
-                      <div>
-                        <span className="font-display text-[19px] font-medium italic text-clay">
-                          Enquire
-                        </span>
-                        <span className="text-[12px] text-ink-soft ml-1.5">for rates</span>
-                      </div>
+                      {p.bookingMode === "direct" ? (
+                        <div>
+                          <span className="font-display text-[19px] font-medium italic text-clay">
+                            Book now
+                          </span>
+                          <span className="text-[12px] text-ink-soft ml-1.5">direct with us</span>
+                        </div>
+                      ) : (
+                        <div>
+                          <span className="font-display text-[19px] font-medium italic text-clay">
+                            Request to book
+                          </span>
+                        </div>
+                      )}
                       <span className="text-[11px] text-ink-soft">
-                        {p.reviews > 0 ? `${p.reviews} reviews` : "No reviews yet"}
+                        {p.reviews > 0 ? `${p.reviews} reviews` : "New to M&S"}
                       </span>
                     </div>
                   </div>

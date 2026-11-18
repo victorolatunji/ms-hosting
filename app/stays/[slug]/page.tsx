@@ -9,26 +9,25 @@ import {
   Users,
   Bed,
   MapPin,
-  Wifi,
-  Car,
-  Wind,
-  Coffee,
   Bath,
+  ShowerHead,
 } from "lucide-react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 // import ChatWidget from "@/app/components/ChatWidget";
 import Eyebrow from "@/app/components/ui/Eyebrow";
 import InquiryForm from "@/app/components/InquiryForm";
+import Gallery from "@/app/components/Gallery";
+import BookingWidget from "@/app/components/BookingWidget";
+import SaveButton from "@/app/components/SaveButton";
+import { badgeFor, perksFor, PERKS } from "@/lib/perks";
 import { PROPERTIES, getPropertyBySlug } from "@/lib/properties";
+import { getPublicProperty } from "@/lib/listing-status";
+import JsonLd from "@/app/components/JsonLd";
+import { SITE_NAME, abs } from "@/lib/site";
 
-const STANDARD_AMENITIES: [React.ComponentType<{ size?: number; className?: string }>, string][] = [
-  [Wifi,   "Fast Wi-Fi"],
-  [Car,    "Free parking"],
-  [Wind,   "AC and heat"],
-  [Coffee, "Espresso bar"],
-  [Bath,   "Plush linens"],
-];
+
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return PROPERTIES.map((p) => ({ slug: p.slug }));
@@ -49,6 +48,13 @@ export async function generateMetadata({
   return {
     title: `${property.name} in ${property.city} | M&S Hosting`,
     description: property.blurb,
+    alternates: { canonical: `/stays/${property.slug}` },
+    openGraph: {
+      title: `${property.name}, ${property.city}`,
+      description: property.blurb,
+      url: `/stays/${property.slug}`,
+      images: [{ url: property.img, alt: property.name }],
+    },
   };
 }
 
@@ -58,14 +64,31 @@ export default async function PropertyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const property = getPropertyBySlug(slug);
+  const property = await getPublicProperty(slug);
 
   if (!property) {
     notFound();
   }
 
+  const isDirect = property.bookingMode === "direct";
+
+  const structured = {
+    "@context": "https://schema.org",
+    "@type": "Accommodation",
+    name: property.name,
+    description: property.description,
+    url: abs(`/stays/${property.slug}`),
+    image: property.gallery.slice(0, 8).map(abs),
+    occupancy: { "@type": "QuantitativeValue", maxValue: property.guests },
+    ...(property.bedrooms ? { numberOfBedrooms: property.bedrooms } : {}),
+    ...(property.baths ? { numberOfBathroomsTotal: property.baths } : {}),
+    address: { "@type": "PostalAddress", addressLocality: property.city, addressRegion: "ON", addressCountry: "CA" },
+    containedInPlace: { "@type": "LodgingBusiness", name: SITE_NAME, url: abs("/") },
+  };
+
   return (
     <>
+      <JsonLd data={structured} />
       <Header />
 
       <main className="max-w-[1320px] mx-auto px-6 pt-8 pb-[110px] max-md:px-5 max-md:pt-6 max-md:pb-[70px]">
@@ -83,29 +106,28 @@ export default async function PropertyPage({
 
           {/* LEFT COLUMN: hero photo + story */}
           <div>
-            <div className="rounded-[22px] overflow-hidden border border-line aspect-[4/3] relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={property.img}
-                alt={property.name}
-                className="w-full h-full object-cover"
-              />
-              {property.tag && (
-                <div className="absolute top-4 left-4 bg-bone text-moss px-3.5 py-2 rounded-full text-[12px] font-medium tracking-[0.02em] flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-clay rotate-45" />
-                  {property.tag}
-                </div>
-              )}
-            </div>
+            <Gallery photos={property.gallery} name={property.name} tag={badgeFor(property)} />
 
             <div className="mt-9">
               <Eyebrow>The home</Eyebrow>
+              <div className="flex items-start justify-between gap-4">
               <h1
-                className="font-display m-0 leading-[1.05] text-moss"
-                style={{ fontSize: "clamp(32px, 4.5vw, 54px)" }}
-              >
-                {property.name}
-              </h1>
+                  className="font-display m-0 leading-[1.05] text-moss"
+                  style={{ fontSize: "clamp(32px, 4.5vw, 54px)" }}
+                >
+                  {property.name}
+                </h1>
+                <SaveButton slug={property.slug} name={property.name} className="mt-2 shrink-0 border border-line" />
+              </div>
+              {perksFor(property).length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {perksFor(property).map((id) => (
+                    <span key={id} className="rounded-full border border-line px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft">
+                      {PERKS[id].label}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[14px] text-ink-soft">
                 <Link
@@ -124,7 +146,7 @@ export default async function PropertyPage({
                   </span>
                 ) : (
                   <span className="font-mono text-[10px] text-amber tracking-[0.15em] uppercase">
-                    New listing
+                    New to M&amp;S
                   </span>
                 )}
               </div>
@@ -134,19 +156,37 @@ export default async function PropertyPage({
               </p>
             </div>
 
-            <div className="mt-10">
-              <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-clay mb-4 flex items-center gap-3">
-                <span className="w-[7px] h-[7px] bg-clay rotate-45 inline-block" />
-                What every M&amp;S home includes
+            {property.goodToKnow.length > 0 && (
+              <div className="mt-10">
+                <Eyebrow>Good to know</Eyebrow>
+                <ul className="m-0 mt-1 flex list-none flex-col gap-3 p-0">
+                  {property.goodToKnow.map((note) => (
+                    <li key={note} className="flex items-start gap-3 text-[15px] leading-[1.6] text-ink-soft">
+                      <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rotate-45 bg-clay" />
+                      {note}
+                    </li>
+                  ))}
+                </ul>
+                {property.registration && (
+                  <p className="m-0 mt-4 font-mono text-[11px] tracking-[0.08em] text-ink-soft">
+                    Short-term rental registration: {property.registration}
+                  </p>
+                )}
               </div>
-              <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-5">
-                {STANDARD_AMENITIES.map(([Icon, label]) => (
-                  <div
-                    key={label}
-                    className="border border-line rounded-[14px] px-4 py-5"
-                  >
-                    <Icon size={20} className="text-clay mb-2.5" />
-                    <div className="text-[13px] text-ink">{label}</div>
+            )}
+
+            <div className="mt-10">
+              <Eyebrow>At a glance</Eyebrow>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {[
+                  [Users, `Sleeps ${property.guests}`],
+                  [Bed, property.beds],
+                  ...(property.baths !== null ? [[Bath, `${property.baths} bath${property.baths === 1 ? "" : "s"}`] as const] : []),
+                  [MapPin, `${property.city}, ON`],
+                ].map(([Icon, label]) => (
+                  <div key={String(label)} className="rounded-[14px] border border-line px-4 py-5">
+                    <Icon size={20} className="mb-2.5 text-clay" />
+                    <div className="text-[13px] text-ink">{label as string}</div>
                   </div>
                 ))}
               </div>
@@ -157,19 +197,27 @@ export default async function PropertyPage({
           <div className="lg:sticky lg:top-24 lg:self-start">
 
             <div className="bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
-              <Eyebrow>Enquire</Eyebrow>
+              <Eyebrow>{isDirect ? "Book direct" : "Request to book"}</Eyebrow>
               <div
                 className="font-display text-moss leading-[1.1] mb-6"
                 style={{ fontSize: "clamp(26px, 3vw, 32px)" }}
               >
-                Rates on{" "}
-                <span className="italic text-clay">request.</span>
+                {isDirect ? (
+                  <>Book your <span className="italic text-clay">stay.</span></>
+                ) : (
+                  <>Rates on <span className="italic text-clay">request.</span></>
+                )}
               </div>
 
               <ul className="list-none p-0 m-0 mb-6 flex flex-col gap-3 text-[14px]">
                 <li className="flex items-center gap-2.5 text-ink">
                   <Bed size={15} className="text-clay" /> {property.beds}
                 </li>
+                {property.baths !== null && (
+                  <li className="flex items-center gap-2.5 text-ink">
+                    <ShowerHead size={15} className="text-clay" /> {property.baths} bath{property.baths === 1 ? "" : "s"}
+                  </li>
+                )}
                 <li className="flex items-center gap-2.5 text-ink">
                   <Users size={15} className="text-clay" /> Sleeps {property.guests}
                 </li>
@@ -178,14 +226,25 @@ export default async function PropertyPage({
                 </li>
               </ul>
 
-              <InquiryForm
-                inquiryType="property"
-                subject={`Enquiry about ${property.name}`}
-                messagePlaceholder={`Tell us about your stay at ${property.name}`}
-                submitLabel="Send enquiry"
-                footnote="Maddie or Sam will reply within the hour during the day, or first thing the next morning."
-                propertySlug={property.slug}
-              />
+              {property.unavailable ? (
+                <div className="rounded-xl border border-line bg-bone-soft px-5 py-5 text-[14px] leading-[1.6] text-ink">
+                  This home isn&apos;t taking bookings right now.{" "}
+                  <Link href={`/cities/${property.citySlug}`} className="text-clay">See other stays in {property.city}</Link>{" "}
+                  or <Link href="/#contact" className="text-clay">ask us</Link> when it&apos;s back.
+                </div>
+              ) : isDirect ? (
+                <BookingWidget slug={property.slug} name={property.name} />
+              ) : (
+                <InquiryForm
+                  inquiryType="property"
+                  subject={`Booking request: ${property.name}`}
+                  messagePlaceholder={`What brings you to ${property.city}? Anything we should know about your stay?`}
+                  submitLabel="Request to book"
+                  footnote="Sam or Maddie will confirm availability and rates, usually within the hour during the day."
+                  propertySlug={property.slug}
+                  askDates={{ maxGuests: property.guests }}
+                />
+              )}
             </div>
           </div>
         </div>

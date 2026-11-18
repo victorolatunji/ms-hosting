@@ -38,7 +38,7 @@ export default function ChatWidget() {
               {/* Tiny pulsing green dot, "online" indicator */}
               <span className="w-2 h-2 rounded-full bg-[#7FA88A] pulse-dot" />
               <span className="font-display text-[18px] font-medium">
-                Maddie &amp; Sam are here
+                Sam &amp; Maddie are here
               </span>
             </div>
             <div className="text-[12px] opacity-80">
@@ -48,7 +48,7 @@ export default function ChatWidget() {
 
           {/* Body, message + input */}
           <div className="p-[22px]">
-            {/* Sample first message, looks like it's from Maddie & Sam */}
+            {/* Sample first message, looks like it's from Sam & Maddie */}
             <div className="bg-clay/10 px-[15px] py-3.5 rounded-[14px] text-[13px] text-ink mb-3.5 leading-[1.5]">
               Hi there. Anything we can help you find today?
             </div>

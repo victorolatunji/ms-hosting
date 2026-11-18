@@ -24,6 +24,10 @@ export type InquiryFormProps = {
 
   // Optional property slug, included with property-type submissions.
   propertySlug?: string;
+
+  // Show check-in / check-out / guests (request-to-book forms).
+  // Sent as booking_date, e.g. "2026-12-04 to 2026-12-06, 4 guests".
+  askDates?: { maxGuests: number };
 };
 
 type FormValues = {
@@ -32,6 +36,9 @@ type FormValues = {
   extra: string;
   message: string;
   marketingConsent: boolean;
+  checkin: string;
+  checkout: string;
+  guests: number;
 };
 
 type SubmitState =
@@ -48,6 +55,7 @@ export default function InquiryForm({
   footnote,
   extraField,
   propertySlug,
+  askDates,
 }: InquiryFormProps) {
   const [values, setValues] = useState<FormValues>({
     name: "",
@@ -55,6 +63,9 @@ export default function InquiryForm({
     extra: "",
     message: "",
     marketingConsent: false,
+    checkin: "",
+    checkout: "",
+    guests: 1,
   });
 
   const [state, setState] = useState<SubmitState>({ kind: "idle" });
@@ -65,6 +76,10 @@ export default function InquiryForm({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (askDates && values.checkin && values.checkout && values.checkout <= values.checkin) {
+      setState({ kind: "error", message: "Check-out needs to be after check-in." });
+      return;
+    }
     setState({ kind: "submitting" });
 
     const payload: Record<string, unknown> = {
@@ -81,6 +96,9 @@ export default function InquiryForm({
     }
     if (propertySlug) {
       payload.property_slug = propertySlug;
+    }
+    if (askDates && (values.checkin || values.checkout)) {
+      payload.booking_date = `${values.checkin || "?"} to ${values.checkout || "?"}, ${values.guests} guest${values.guests === 1 ? "" : "s"}`;
     }
 
     try {
@@ -111,6 +129,9 @@ export default function InquiryForm({
         extra: "",
         message: "",
         marketingConsent: false,
+        checkin: "",
+        checkout: "",
+        guests: 1,
       });
     } catch (err) {
       console.error("Submit failed:", err);
@@ -194,6 +215,41 @@ export default function InquiryForm({
             disabled={isSubmitting}
             className="w-full px-[15px] py-[13px] border border-line rounded-xl bg-transparent text-sm text-ink font-body transition-colors disabled:opacity-60"
           />
+        </div>
+      )}
+
+      {askDates && (
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="iq-in" className="block font-mono text-[10px] tracking-[0.2em] uppercase mb-2 text-ink-soft">Check-in</label>
+            <input
+              id="iq-in" type="date" required value={values.checkin}
+              min={new Date().toLocaleDateString("en-CA")}
+              onChange={(e) => updateField("checkin", e.target.value)} disabled={isSubmitting}
+              className="w-full px-[15px] py-[13px] border border-line rounded-xl bg-transparent text-sm text-ink font-body disabled:opacity-60"
+            />
+          </div>
+          <div>
+            <label htmlFor="iq-out" className="block font-mono text-[10px] tracking-[0.2em] uppercase mb-2 text-ink-soft">Check-out</label>
+            <input
+              id="iq-out" type="date" required value={values.checkout}
+              min={values.checkin || new Date().toLocaleDateString("en-CA")}
+              onChange={(e) => updateField("checkout", e.target.value)} disabled={isSubmitting}
+              className="w-full px-[15px] py-[13px] border border-line rounded-xl bg-transparent text-sm text-ink font-body disabled:opacity-60"
+            />
+          </div>
+          <div className="col-span-2">
+            <label htmlFor="iq-guests" className="block font-mono text-[10px] tracking-[0.2em] uppercase mb-2 text-ink-soft">Guests</label>
+            <select
+              id="iq-guests" value={values.guests} disabled={isSubmitting}
+              onChange={(e) => updateField("guests", Number(e.target.value))}
+              className="w-full px-[15px] py-[13px] border border-line rounded-xl bg-transparent text-sm text-ink font-body disabled:opacity-60"
+            >
+              {Array.from({ length: askDates.maxGuests }, (_, n) => n + 1).map((n) => (
+                <option key={n} value={n}>{n} guest{n === 1 ? "" : "s"}</option>
+              ))}
+            </select>
+          </div>
         </div>
       )}
 

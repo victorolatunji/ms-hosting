@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, Globe, ChevronDown } from "lucide-react";
+import SavedLink from "./SavedLink";
 
 const CURRENCIES = ["CAD", "USD", "EUR", "GBP", "AUD"] as const;
 type Currency = (typeof CURRENCIES)[number];
@@ -50,7 +51,7 @@ export default function Header() {
           <div className="leading-tight">
             <div className="font-display text-lg font-semibold">M&amp;S Hosting</div>
             <div className="font-mono text-[9px] tracking-[0.22em] text-ink-soft uppercase mt-0.5">
-              Greater Toronto Area
+              Ontario · Hosted in person
             </div>
           </div>
         </Link>
@@ -65,6 +66,8 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+
+          <SavedLink />
 
           <div className="relative">
             <button

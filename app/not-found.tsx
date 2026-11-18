@@ -4,6 +4,8 @@
 //
 // Server component, fully static, no interactivity needed.
 
+import { PROPERTIES } from "@/lib/properties";
+import { toWords } from "@/lib/words";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import Header from "@/app/components/Header";
@@ -45,7 +47,7 @@ export default function NotFound() {
                   Browse
                 </div>
                 <div className="font-display text-[22px] text-moss leading-[1.15] mb-2">
-                  All eleven stays
+                  All {toWords(PROPERTIES.length)} stays
                 </div>
                 <div className="text-[13px] text-ink-soft flex items-center gap-1.5">
                   See the collection <ChevronRight size={13} />
@@ -77,7 +79,7 @@ export default function NotFound() {
               <Link href="/#contact" className="underline-link text-ink no-underline">
                 Send us a quick message
               </Link>{" "}
-              and Maddie or Sam will track it down.
+              and Sam or Maddie will track it down.
             </p>
           </div>
         </div>

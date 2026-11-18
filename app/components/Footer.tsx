@@ -1,11 +1,12 @@
+import { PROPERTIES } from "@/lib/properties";
+import { capWords } from "@/lib/words";
 import Image from "next/image";
 import Link from "next/link";
 import { Phone } from "lucide-react";
 
 // Footer. Dark moss-dark background, four columns + bottom strip.
 // Server component, all static content.
-// Links wired to real pages where they exist, # for placeholders that are
-// still planned (Wishlist, Reviews, Terms, Privacy, Cookies).
+// Every link points at a real page.
 
 // The three link columns. Each is a title and a list of [label, href] pairs.
 const COLUMNS: { title: string; links: [string, string][] }[] = [
@@ -15,15 +16,15 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
       ["All stays", "/#stays"],
       ["Cities", "/#cities"],
       ["Map view", "/#map"],
-      ["Wishlist", "#"],
+      ["Saved stays", "/saved"],
     ],
   },
   {
     title: "Company",
     links: [
-      ["About Maddie & Sam", "/#about"],
+      ["About Sam & Maddie", "/#about"],
       ["Contact", "/#contact"],
-      ["Reviews", "#"],
+      ["Book Hot Tub Oasis", "/stays/hot-tub-oasis"],
       ["Become a host", "/become-a-host"],
     ],
   },
@@ -37,6 +38,8 @@ const COLUMNS: { title: string; links: [string, string][] }[] = [
     ],
   },
 ];
+
+const INSTAGRAM = "https://www.instagram.com/mshostingsolutions";
 
 export default function Footer() {
   return (
@@ -64,7 +67,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-[13px] leading-[1.7] m-0 mb-4 max-w-[280px]">
-              Family run hosting in the Greater Toronto Area. Eleven homes, two
+              Family run hosting across Ontario. {capWords(PROPERTIES.length)} homes, two
               hosts, real people on the line.
             </p>
             <a
@@ -72,6 +75,20 @@ export default function Footer() {
               className="text-amber text-[13px] no-underline inline-flex items-center gap-1.5"
             >
               <Phone size={12} /> (905) 922 6538
+            </a>
+            <a
+              href={INSTAGRAM}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="M&S Hosting Solutions on Instagram"
+              className="mt-3 flex w-fit items-center gap-2 text-[13px] text-bone/80 no-underline transition-colors hover:text-amber"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none" />
+              </svg>
+              @mshostingsolutions
             </a>
           </div>
 
@@ -118,12 +135,12 @@ export default function Footer() {
             <span className="text-bone/50">
               Site by{" "}
               <a
-                href="https://github.com/victorolatunji"
+                href="https://victorolatunji.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-bone/70 hover:text-amber transition-colors no-underline"
               >
-                vao.dev
+                victor@vaolabs.dev
               </a>
             </span>
             <span className="font-mono tracking-[0.12em] uppercase text-[10px]">

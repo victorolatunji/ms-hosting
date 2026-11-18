@@ -78,7 +78,7 @@ body {
 }
 .marquee-track {
   display: flex;
-  gap: 60px;
+  width: max-content;
   animation: marquee 50s linear infinite;
 }
 
@@ -125,3 +125,35 @@ textarea::placeholder {
   color: var(--color-ink-soft);
   opacity: .65;
 }
+/* Heart pop when a stay is saved */
+@keyframes heartPop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+.heart-pop { animation: heartPop .35s cubic-bezier(.2,.8,.2,1); }
+
+/* Hero "moving postcard" */
+@keyframes kenburns { from { transform: scale(1.02) translate3d(0,0,0); } to { transform: scale(1.14) translate3d(-2%, -1.5%, 0); } }
+.kenburns { animation: kenburns linear forwards; will-change: transform; }
+@keyframes slideProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.slide-progress { transform-origin: left; animation: slideProgress linear forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.fade-in { animation: fadeIn .8s ease-out; }
+@keyframes stampSpin { to { transform: rotate(360deg); } }
+.stamp-spin { animation: stampSpin 28s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kenburns, .stamp-spin, .slide-progress, .marquee-track, .marquee-track-reverse { animation: none !important; }
+}
+
+.marquee-track-reverse { display: flex; width: max-content; animation: marquee 60s linear infinite reverse; }
+
+/* Hero postcard: an arch whose edges slowly "breathe" */
+@keyframes flowEdges {
+  0%, 100% { border-radius: 50% 50% 22px 22px / 22% 22% 22px 22px; }
+  33%      { border-radius: 46% 54% 28px 18px / 26% 19% 24px 20px; }
+  66%      { border-radius: 54% 46% 18px 28px / 19% 26% 20px 24px; }
+}
+.flow-edges {
+  border-radius: 50% 50% 22px 22px / 22% 22% 22px 22px;
+  animation: flowEdges 16s ease-in-out infinite;
+  transform: translateZ(0); /* keep the clip on the GPU */
+}
+@media (prefers-reduced-motion: reduce) { .flow-edges { animation: none; } }

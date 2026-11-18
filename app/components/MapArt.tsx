@@ -128,11 +128,11 @@ export default function MapArt() {
       <line x1="0" y1="640.0" x2="1200" y2="640.0"/>
       </g>
       <g fill="#6E654F" opacity="0.45" fontFamily="var(--font-mono, monospace)" fontSize="9" letterSpacing="0.5">
-      <text x="431.6" y="14">79°30'W</text>
-      <text x="860.1" y="14">79°00'W</text>
-      <text x="1074.4" y="14">78°45'W</text>
-      <text x="4" y="237.0">44°00'N</text>
-      <text x="4" y="437.0">43°45'N</text>
+      <text x="431.6" y="14">79°30&apos;W</text>
+      <text x="860.1" y="14">79°00&apos;W</text>
+      <text x="1074.4" y="14">78°45&apos;W</text>
+      <text x="4" y="237.0">44°00&apos;N</text>
+      <text x="4" y="437.0">43°45&apos;N</text>
       </g>
       <g fill="none" stroke="#A6B8B4" strokeWidth="2" opacity="0.7" filter="url(#rough)">
       <path d="M 308.6 296.0 L 377.1 392.0 L 428.6 464.0 L 454.3 532.0"/>

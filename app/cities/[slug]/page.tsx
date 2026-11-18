@@ -12,7 +12,9 @@ import Footer from "@/app/components/Footer";
 import ChatWidget from "@/app/components/ChatWidget";
 import Eyebrow from "@/app/components/ui/Eyebrow";
 import { CITIES, getCityBySlug } from "@/lib/cities";
-import { getPropertiesByCity } from "@/lib/properties";
+import { getPublicProperties } from "@/lib/listing-status";
+import { badgeFor } from "@/lib/perks";
+import SaveButton from "@/app/components/SaveButton";
 
 // Tell Next.js to pre-build a page for every known city slug at compile time.
 export function generateStaticParams() {
@@ -20,6 +22,8 @@ export function generateStaticParams() {
 }
 
 // Per-page metadata for SEO and browser tabs.
+export const revalidate = 60;
+
 export async function generateMetadata({
   params,
 }: {
@@ -35,6 +39,13 @@ export async function generateMetadata({
   return {
     title: `Stays in ${city.name} | M&S Hosting`,
     description: city.intro,
+    alternates: { canonical: `/cities/${city.slug}` },
+    openGraph: {
+      title: `Stays in ${city.name}`,
+      description: city.intro,
+      url: `/cities/${city.slug}`,
+      images: [{ url: city.img, alt: city.landmark }],
+    },
   };
 }
 
@@ -51,7 +62,7 @@ export default async function CityPage({
   }
 
   // Fetch the properties in this city from the shared properties data
-  const propertiesInCity = getPropertiesByCity(slug);
+  const propertiesInCity = (await getPublicProperties()).filter((p) => p.citySlug === slug);
 
   return (
     <>
@@ -63,9 +74,18 @@ export default async function CityPage({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={city.img}
-            alt={city.name}
+            alt={`${city.landmark}, ${city.name}`}
             className="absolute inset-0 w-full h-full object-cover"
           />
+          {/* Landmark caption + licence credit (Wikimedia Commons) */}
+          <a
+            href={city.landmarkCredit}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-3 right-4 z-10 rounded bg-ink/45 px-2 py-1 text-[10px] font-mono tracking-[0.08em] text-bone/85 no-underline hover:text-bone"
+          >
+            {city.landmark} · Photo: Wikimedia Commons
+          </a>
           {/* Dark moss gradient so the title text reads cleanly */}
           <div className="absolute inset-0 bg-gradient-to-b from-moss/30 via-moss/40 to-moss-dark/90" />
 
@@ -120,8 +140,18 @@ export default async function CityPage({
               <Link
                 key={p.id}
                 href={`/stays/${p.slug}`}
-                className="lift bg-bone rounded-[18px] overflow-hidden border border-line relative no-underline text-ink cursor-pointer block"
+                aria-disabled={p.unavailable || undefined}
+                tabIndex={p.unavailable ? -1 : undefined}
+                className={`lift bg-bone rounded-[18px] overflow-hidden border border-line relative no-underline text-ink block ${p.unavailable ? "pointer-events-none opacity-55 grayscale-[.6]" : "cursor-pointer"}`}
               >
+                {p.unavailable && (
+                  <div
+                    className="absolute top-3.5 left-1/2 z-[5] rounded bg-ink px-3.5 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-bone"
+                    style={{ transform: "translateX(-50%) rotate(-3deg)" }}
+                  >
+                    Not available right now
+                  </div>
+                )}
                 {/* Photo */}
                 <div className="relative aspect-[4/3] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -130,12 +160,13 @@ export default async function CityPage({
                     alt={p.name}
                     className="img-zoom w-full h-full object-cover"
                   />
-                  {p.tag && (
+                  {badgeFor(p) && (
                     <div className="absolute top-3.5 left-3.5 bg-bone text-moss px-3 py-1.5 rounded-full text-[11px] font-medium tracking-[0.02em] flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 bg-clay rotate-45" />
-                      {p.tag}
+                      {badgeFor(p)}
                     </div>
                   )}
+                  <SaveButton slug={p.slug} name={p.name} className="absolute top-3 right-3" />
                 </div>
 
                 {/* Card body */}
@@ -167,12 +198,14 @@ export default async function CityPage({
                   <div className="flex justify-between items-center border-t border-line pt-3.5">
                     <div>
                       <span className="font-display text-[19px] font-medium italic text-clay">
-                        Enquire
+                        {p.bookingMode === "direct" ? "Book now" : "Request to book"}
                       </span>
-                      <span className="text-[12px] text-ink-soft ml-1.5">for rates</span>
+                      {p.bookingMode === "direct" && (
+                        <span className="text-[12px] text-ink-soft ml-1.5">direct with us</span>
+                      )}
                     </div>
                     <span className="text-[11px] text-ink-soft">
-                      {p.reviews > 0 ? `${p.reviews} reviews` : "No reviews yet"}
+                      {p.reviews > 0 ? `${p.reviews} reviews` : "New to M&S"}
                     </span>
                   </div>
                 </div>
