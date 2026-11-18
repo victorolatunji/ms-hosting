@@ -15,7 +15,7 @@ async function walk(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name !== "cities-unused") await walk(full);
+      if (entry.name !== "cities-unused" && entry.name !== "retired") await walk(full);
       continue;
     }
     if (!/\.(jpe?g|png)$/i.test(entry.name)) continue;

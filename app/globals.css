@@ -42,6 +42,9 @@ html, body {
   max-width: 100vw;
 }
 
+/* #links (Stays, Map, Contact...) land just below the sticky header, not under it */
+html { scroll-padding-top: 84px; }
+
 body {
   /* Belt-and-suspenders: also enforce on body specifically */
   overflow-x: clip;

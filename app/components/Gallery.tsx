@@ -6,6 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Grid2X2, X } from "lucide-react";
+import { lockScroll } from "@/lib/scroll-lock";
 
 type Props = { photos: string[]; name: string; tag?: string | null };
 
@@ -31,11 +32,10 @@ export default function Gallery({ photos, name, tag }: Props) {
       if (e.key === "ArrowLeft") step(-1);
     };
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockScroll();
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      unlock();
     };
   }, [open, close, step]);
 
@@ -122,7 +122,7 @@ export default function Gallery({ photos, name, tag }: Props) {
           role="dialog"
           aria-modal="true"
           aria-label={`${name} photos`}
-          className="fixed inset-0 z-[100] flex flex-col bg-ink/95"
+          className="fixed inset-0 z-[200] flex flex-col overscroll-contain bg-ink/95"
           onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
           onTouchEnd={(e) => {
             if (touchX.current === null) return;

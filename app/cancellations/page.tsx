@@ -8,7 +8,7 @@ import Footer from "@/app/components/Footer";
 // import ChatWidget from "@/app/components/ChatWidget";
 import Eyebrow from "@/app/components/ui/Eyebrow";
 import InquiryForm from "@/app/components/InquiryForm";
-import { DIRECT_CANCELLATION, DIRECT_HOUSE_RULES } from "@/lib/policies";
+import DirectPolicy from "@/app/components/legal/DirectPolicy";
 
 export const metadata: Metadata = {
   title: "Cancel a booking | M&S Hosting",
@@ -55,34 +55,9 @@ export default function CancellationsPage() {
           </p>
 
           {/* Direct-booking policy (linked from the Book now panel) */}
-          <section id="direct" className="mt-10 scroll-mt-24 rounded-[22px] border border-line p-7">
-            <Eyebrow>Booked direct with us</Eyebrow>
-            <h2 className="m-0 mb-4 font-display text-[28px] leading-tight text-moss">
-              Hot Tub Oasis: <span className="italic text-clay">{DIRECT_CANCELLATION.name} policy</span>
-            </h2>
-            <p className="m-0 mb-3 text-[14px] text-ink-soft">The same policy as the home&apos;s Airbnb listing:</p>
-            <ul className="m-0 mb-6 flex list-none flex-col gap-2.5 p-0">
-              {DIRECT_CANCELLATION.rules.map((r) => (
-                <li key={r} className="flex items-start gap-3 text-[14px] leading-[1.6] text-ink">
-                  <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rotate-45 bg-clay" /> {r}
-                </li>
-              ))}
-            </ul>
-            <h3 className="m-0 mb-3 font-display text-[21px] text-moss">House rules</h3>
-            <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
-              {DIRECT_HOUSE_RULES.map((r) => (
-                <li key={r} className="flex items-start gap-3 text-[14px] leading-[1.6] text-ink-soft">
-                  <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rotate-45 bg-amber" /> {r}
-                </li>
-              ))}
-            </ul>
-            <p className="m-0 mt-5 text-[13px] text-ink-soft">
-              Booked on Airbnb or another platform? Cancel through that platform, where its policy applies.
-              Questions either way, send us a note below.
-            </p>
-          </section>
+          <DirectPolicy />
 
-          <div className="mt-10 bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
+          <div id="cancel-form" className="mt-10 scroll-mt-24 bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
             <Eyebrow>Send a cancellation request</Eyebrow>
             <div
               className="font-display text-moss leading-[1.1] mb-6"

@@ -9,8 +9,8 @@ import InquiryForm from "./InquiryForm";
 import { quote, type DirectBookingConfig } from "@/lib/direct-booking";
 import { useCurrency } from "./CurrencyContext";
 import { DIRECT_CANCELLATION } from "@/lib/policies";
-import Link from "next/link";
 import AvailabilityCalendar from "./AvailabilityCalendar";
+import LegalLink from "./legal/LegalLink";
 
 type Range = { start: string; end: string };
 type Config = Omit<DirectBookingConfig, "icalEnvVar">;
@@ -210,8 +210,8 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 shrink-0 accent-clay" />
           <span>
             I&apos;m 18 or older and agree to the{" "}
-            <Link href="/cancellations#direct" target="_blank" className="text-clay">house rules and cancellation policy</Link> and the{" "}
-            <Link href="/terms" target="_blank" className="text-clay">terms</Link>.
+            <LegalLink href="/cancellations#direct" className="text-clay">house rules and cancellation policy</LegalLink> and the{" "}
+            <LegalLink href="/terms" className="text-clay">terms</LegalLink>.
           </span>
         </label>
       )}

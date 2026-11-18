@@ -3,6 +3,8 @@ import { capWords } from "@/lib/words";
 import Image from "next/image";
 import Link from "next/link";
 import { Phone } from "lucide-react";
+import LegalLink from "./legal/LegalLink";
+import { isLegalPath } from "./legal/paths";
 
 // Footer. Dark moss-dark background, four columns + bottom strip.
 // Server component, all static content.
@@ -102,7 +104,14 @@ export default function Footer() {
                   const isInternalRoute = href.startsWith("/");
                   return (
                     <li key={label}>
-                      {isInternalRoute ? (
+                      {isLegalPath(href) ? (
+                        <LegalLink
+                          href={href}
+                          className="text-bone/70 no-underline text-sm hover:text-bone transition-colors"
+                        >
+                          {label}
+                        </LegalLink>
+                      ) : isInternalRoute ? (
                         <Link
                           href={href}
                           className="text-bone/70 no-underline text-sm hover:text-bone transition-colors"
