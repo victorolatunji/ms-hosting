@@ -9,7 +9,6 @@ import type { Metadata } from "next";
 import { ChevronLeft, Star } from "lucide-react";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import ChatWidget from "@/app/components/ChatWidget";
 import Eyebrow from "@/app/components/ui/Eyebrow";
 import { CITIES, getCityBySlug } from "@/lib/cities";
 import { getPublicProperties } from "@/lib/listing-status";
@@ -216,7 +215,6 @@ export default async function CityPage({
       </main>
 
       <Footer />
-      <ChatWidget />
     </>
   );
 }
