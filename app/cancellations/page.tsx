@@ -57,7 +57,7 @@ export default function CancellationsPage() {
           {/* Direct-booking policy (linked from the Book now panel) */}
           <DirectPolicy />
 
-          <div id="cancel-form" className="mt-10 scroll-mt-24 bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
+          <div id="cancel-form" className="mt-10 bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
             <Eyebrow>Send a cancellation request</Eyebrow>
             <div
               className="font-display text-moss leading-[1.1] mb-6"

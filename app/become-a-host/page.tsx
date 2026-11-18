@@ -77,7 +77,7 @@ export default function BecomeAHost() {
           </div>
 
           {/* RIGHT: form card. Sticky only on desktop. */}
-          <div id="host-form" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
+          <div id="host-form" className="lg:sticky lg:top-24 lg:self-start">
             <div className="bg-bone border border-line rounded-[22px] p-7 shadow-[0_18px_44px_-22px_rgba(31,37,33,0.18)]">
               <Eyebrow>Tell us about your home</Eyebrow>
               <div

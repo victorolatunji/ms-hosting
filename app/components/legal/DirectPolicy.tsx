@@ -5,7 +5,7 @@ import { DIRECT_CANCELLATION, DIRECT_HOUSE_RULES } from "@/lib/policies";
 
 export default function DirectPolicy({ id = "direct", inPopup = false }: { id?: string; inPopup?: boolean }) {
   return (
-    <section id={id} className={`${inPopup ? "mt-4" : "mt-10"} scroll-mt-24 rounded-[22px] border border-line p-7 max-md:p-5`}>
+    <section id={id} className={`${inPopup ? "mt-4" : "mt-10"} rounded-[22px] border border-line p-7 max-md:p-5`}>
       <Eyebrow>Booked direct with us</Eyebrow>
       <h2 className="m-0 mb-4 font-display text-[28px] leading-tight text-moss">
         Hot Tub Oasis: <span className="italic text-clay">{DIRECT_CANCELLATION.name} policy</span>

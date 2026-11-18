@@ -8,6 +8,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { LEGAL_PROSE } from "./prose";
 import { lockScroll } from "@/lib/scroll-lock";
@@ -28,6 +29,8 @@ export default function LegalModal({ href: startHref, onClose }: { href: string;
   const [path, hash] = href.split("#") as [string, string | undefined];
   const doc = path in DOCS ? DOCS[path as LegalPath] : null;
   const scrollBox = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const here = usePathname();
   const closeBtn = useRef<HTMLButtonElement>(null);
 
   // Lock the page behind, close on Esc, put focus on the close button.
@@ -103,6 +106,20 @@ export default function LegalModal({ href: startHref, onClose }: { href: string;
             const a = (e.target as HTMLElement).closest("a");
             const to = a?.getAttribute("href");
             if (!a || !to || a.target === "_blank" || e.metaKey || e.ctrlKey || e.shiftKey) return;
+            // A link to a form (marked data-form): close the popup, then go to the form.
+            if (a.dataset.form !== undefined) {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+              const [toPath, id] = to.split("#");
+              if (toPath === here && id) {
+                // Already on that page: just scroll down to the form.
+                setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+              } else {
+                router.push(to);
+              }
+              return;
+            }
             if (isLegalPath(to)) {
               e.preventDefault();
               e.stopPropagation();
