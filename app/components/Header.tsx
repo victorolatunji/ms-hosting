@@ -117,13 +117,13 @@ export default function Header() {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden bg-bone border-t border-line px-5 pt-2 pb-[22px]">
-          {[...NAV_LINKS, { label: "Terms", href: "#terms" }].map((link) => (
+        <div className="md:hidden bg-moss-dark border-t border-bone/10 px-5 pt-2 pb-[22px] shadow-[0_24px_40px_-20px_rgba(31,37,33,0.6)]">
+          {[...NAV_LINKS, { label: "Saved stays", href: "/saved" }, { label: "Terms", href: "/terms" }].map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="block py-4 border-b border-line text-ink no-underline text-[15px]"
+              className="block py-4 border-b border-bone/10 text-bone/85 no-underline text-[15px] hover:text-amber"
             >
               {link.label}
             </Link>
@@ -136,8 +136,8 @@ export default function Header() {
                 onClick={() => setCurrency(c)}
                 className={`flex-1 p-[11px] rounded-[10px] text-xs cursor-pointer border ${
                   c === currency
-                    ? "bg-moss text-bone border-moss"
-                    : "bg-transparent text-ink border-line"
+                    ? "bg-amber text-moss-dark border-amber font-medium"
+                    : "bg-transparent text-bone/80 border-bone/20"
                 }`}
               >
                 {c}

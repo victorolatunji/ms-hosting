@@ -15,6 +15,7 @@ export default function MobileNav() {
     { href: "/saved", label: "Saved", icon: Heart, active: path === "/saved", badge: count },
     { href: "tel:9059226538", label: "Call", icon: Phone, active: false },
   ];
+  if (path?.startsWith("/admin")) return null; // not needed inside the admin
   return (
     <nav
       aria-label="Quick links"

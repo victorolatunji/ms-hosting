@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Script from "next/script";
 
 const TAWK_PATTERN = /tawk\.to|Tawk_API/i;
@@ -33,8 +34,21 @@ function suppressTawkConsoleNoise() {
   };
 }
 
+type TawkApi = { hideWidget?: () => void; showWidget?: () => void; onLoad?: () => void };
+const tawk = () => (window as unknown as { Tawk_API?: TawkApi }).Tawk_API;
+
 export default function TawkScript() {
   const widgetId = process.env.NEXT_PUBLIC_TAWK_TO_ID;
+  const path = usePathname();
+  const isAdmin = path?.startsWith("/admin") ?? false;
+
+  // Keep the chat out of the admin area (and bring it back on the public site).
+  useEffect(() => {
+    const api = tawk();
+    if (!api) return;
+    if (isAdmin) api.hideWidget?.();
+    else api.showWidget?.();
+  }, [isAdmin]);
 
   useEffect(() => {
     if (!widgetId) return;
@@ -50,6 +64,10 @@ export default function TawkScript() {
       dangerouslySetInnerHTML={{
         __html: `
           var Tawk_API = Tawk_API || {};
+          // Never show the chat inside the admin area, even on first load.
+          Tawk_API.onLoad = function () {
+            if (window.location.pathname.indexOf("/admin") === 0) Tawk_API.hideWidget();
+          };
           // Lift the chat bubble above the mobile bottom bar.
           Tawk_API.customStyle = { visibility: { mobile: { position: "br", xOffset: 12, yOffset: 84 } } };
           var Tawk_LoadStart = new Date();

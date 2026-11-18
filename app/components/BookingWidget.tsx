@@ -10,13 +10,15 @@ import { quote, type DirectBookingConfig } from "@/lib/direct-booking";
 import { useCurrency } from "./CurrencyContext";
 import { DIRECT_CANCELLATION } from "@/lib/policies";
 import Link from "next/link";
+import AvailabilityCalendar from "./AvailabilityCalendar";
 
 type Range = { start: string; end: string };
 type Config = Omit<DirectBookingConfig, "icalEnvVar">;
 type Avail = { open: boolean; blocked: Range[]; config: Config };
 
 const toDay = (s: string) => { const [y, m, d] = s.split("-").map(Number); return Date.UTC(y, m - 1, d); };
-const todayStr = () => new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD, local
+const niceShort = (d: string) =>
+  new Date(`${d}T12:00:00Z`).toLocaleDateString("en-CA", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
 
 const inputCls =
   "w-full px-[15px] py-[13px] border border-line rounded-xl bg-transparent text-sm text-ink font-body disabled:opacity-60";
@@ -117,15 +119,22 @@ export default function BookingWidget({ slug, name }: { slug: string; name: stri
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="min-w-0">
-          <label className={labelCls} htmlFor="bk-in">Check-in</label>
-          <input id="bk-in" type="date" style={{ height: 50 }} min={todayStr()} value={checkin} onChange={(e) => setCheckin(e.target.value)} className={inputCls} />
+      <div>
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">Your dates</span>
+          <span className="text-[13px] text-ink">
+            {checkin ? niceShort(checkin) : "Check-in"} <span className="text-ink-soft">→</span> {checkout ? niceShort(checkout) : "Check-out"}
+          </span>
         </div>
-        <div className="min-w-0">
-          <label className={labelCls} htmlFor="bk-out">Check-out</label>
-          <input id="bk-out" type="date" style={{ height: 50 }} min={checkin || todayStr()} value={checkout} onChange={(e) => setCheckout(e.target.value)} className={inputCls} />
-        </div>
+        <AvailabilityCalendar
+          blocked={avail.blocked}
+          checkin={checkin}
+          checkout={checkout}
+          onChange={(a, b) => { setCheckin(a); setCheckout(b); }}
+        />
+        {checkin && !checkout && (
+          <p className="m-0 mt-2 text-[12px] text-ink-soft">Now tap your check-out day.</p>
+        )}
       </div>
 
       <div>
