@@ -16,7 +16,9 @@ import { toWords } from "@/lib/words";
 // Sudbury sits ~350 km north of the frame, so it gets a corner inset instead
 // of a pin (see SUDBURY below).
 type Side = "left" | "right" | "above" | "below";
-type City = { slug: string; name: string; x: number; y: number; label: Side };
+// m = optional phone position. On a narrow map the Durham pins are only a few
+// pixels apart and pile up, so on phones they fan out slightly. Desktop keeps x/y.
+type City = { slug: string; name: string; x: number; y: number; label: Side; m?: [number, number] };
 
 // Projection used by MapArt: x = 529 + (lon + 79.38) * 852, y = 518 - (lat - 43.65) * 784
 const CITIES: City[] = [
@@ -24,10 +26,10 @@ const CITIES: City[] = [
   { slug: "vaughan",   name: "Vaughan",   x: 418, y: 369, label: "below" },
   { slug: "bradford",  name: "Bradford",  x: 376, y: 157, label: "below" },
   { slug: "toronto",   name: "Toronto",   x: 529, y: 518, label: "below" },
-  { slug: "pickering", name: "Pickering", x: 780, y: 371, label: "below" },
-  { slug: "ajax",      name: "Ajax",      x: 840, y: 359, label: "above" },
-  { slug: "whitby",    name: "Whitby",    x: 906, y: 333, label: "below" },
-  { slug: "oshawa",    name: "Oshawa",    x: 972, y: 322, label: "right" },
+  { slug: "pickering", name: "Pickering", x: 780, y: 371, label: "below", m: [705, 405] },
+  { slug: "ajax",      name: "Ajax",      x: 840, y: 359, label: "above", m: [805, 325] },
+  { slug: "whitby",    name: "Whitby",    x: 906, y: 333, label: "below", m: [905, 395] },
+  { slug: "oshawa",    name: "Oshawa",    x: 972, y: 322, label: "right", m: [1005, 315] },
 ];
 
 
@@ -66,15 +68,20 @@ export default function MapSection({ properties = PROPERTIES }: { properties?: P
               key={c.slug}
               href={`/cities/${c.slug}`}
               aria-label={`${c.name}, ${countIn(c.slug)} ${countIn(c.slug) === 1 ? "stay" : "stays"}`}
-              className="group absolute z-10 -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${c.x / 12}%`, top: `${c.y / 7.2}%` }}
+              className="group absolute z-10 -translate-x-1/2 -translate-y-1/2 left-[var(--mx)] top-[var(--my)] md:left-[var(--x)] md:top-[var(--y)]"
+              style={{
+                "--x": `${c.x / 12}%`,
+                "--y": `${c.y / 7.2}%`,
+                "--mx": `${(c.m?.[0] ?? c.x) / 12}%`,
+                "--my": `${(c.m?.[1] ?? c.y) / 7.2}%`,
+              } as React.CSSProperties}
             >
               {/* amber halo on hover / keyboard focus */}
               <span className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber/0 transition-colors duration-300 group-hover:bg-amber/35 group-focus-visible:bg-amber/35" />
               {/* clay dot with stay count */}
               <span
-                className="relative flex h-8 w-8 items-center justify-center rounded-full bg-clay text-bone ring-[3px] ring-bone shadow-[0_3px_10px_-1px_rgba(31,37,33,0.5)] transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 md:h-9 md:w-9"
-                style={{ font: "500 13px var(--font-mono, monospace)" }}
+                className="relative flex h-7 w-7 items-center justify-center rounded-full bg-clay text-bone ring-2 ring-bone md:ring-[3px] shadow-[0_3px_10px_-1px_rgba(31,37,33,0.5)] transition-transform duration-300 group-hover:scale-110 group-focus-visible:scale-110 md:h-9 md:w-9 text-[12px] md:text-[13px]"
+                style={{ fontFamily: "var(--font-mono, monospace)", fontWeight: 500 }}
               >
                 {countIn(c.slug)}
               </span>

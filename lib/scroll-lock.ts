@@ -11,8 +11,10 @@ export function lockScroll(): () => void {
   if (typeof document === "undefined") return () => {};
   locks += 1;
   if (locks === 1) {
+    // Lock <html> only. Setting overflow on <body> too turns body into its own
+    // scroll box (html already has overflow-x: clip), which breaks the sticky
+    // header: it jumps back to the top of the page and the menu opens off screen.
     document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
     try { tawk()?.hideWidget?.(); } catch {}
   }
   let released = false;
@@ -22,7 +24,6 @@ export function lockScroll(): () => void {
     locks = Math.max(0, locks - 1);
     if (locks === 0) {
       document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
       if (!window.location.pathname.startsWith("/admin")) {
         try { tawk()?.showWidget?.(); } catch {}
       }

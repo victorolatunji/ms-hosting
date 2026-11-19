@@ -76,17 +76,18 @@ export default async function CityPage({
             alt={`${city.landmark}, ${city.name}`}
             className="absolute inset-0 w-full h-full object-cover"
           />
-          {/* Landmark caption + licence credit (Wikimedia Commons) */}
+          {/* Dark moss gradient so the title text reads cleanly */}
+          <div className="absolute inset-0 bg-gradient-to-b from-moss/30 via-moss/40 to-moss-dark/90" />
+
+          {/* Photo credit: a small tag in the top corner, clear of the title */}
           <a
             href={city.landmarkCredit}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute bottom-3 right-4 z-10 rounded bg-ink/45 px-2 py-1 text-[10px] font-mono tracking-[0.08em] text-bone/85 no-underline hover:text-bone"
+            className="absolute right-4 top-4 z-10 whitespace-nowrap rounded-full bg-ink/40 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-bone/75 no-underline backdrop-blur-sm hover:text-bone max-md:right-3 max-md:top-3"
           >
-            {city.landmark} · Photo: Wikimedia Commons
+            Photo · Wikimedia Commons
           </a>
-          {/* Dark moss gradient so the title text reads cleanly */}
-          <div className="absolute inset-0 bg-gradient-to-b from-moss/30 via-moss/40 to-moss-dark/90" />
 
           {/* Title + back link, anchored to the bottom */}
           <div className="absolute inset-0 max-w-[1320px] mx-auto px-6 pb-12 flex flex-col justify-end max-md:px-5 max-md:pb-8">
@@ -102,6 +103,10 @@ export default async function CityPage({
             >
               {city.name}
             </h1>
+            {/* What the photo shows, as a quiet line under the name */}
+            <p className="m-0 mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-bone/70">
+              {city.landmark}
+            </p>
           </div>
         </section>
 
